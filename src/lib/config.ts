@@ -1,8 +1,8 @@
 // ⚠️ Toutes les règles commerciales du site sont ici : vérifiez-les avant la mise en ligne.
 export const SHOP = {
   name: 'Poke 30',
-  url: 'https://pokeloot.site',
-  email: 'contact@pokeloot.site',
+  url: 'https://poke30.site',
+  email: 'contact@poke30.site',
   freeShippingFrom: 19.99, // € — livraison offerte à partir de ce montant
   shippingPrice: 5.9, // € — Colissimo suivi
   prepDays: 2, // jours ouvrés de préparation max
