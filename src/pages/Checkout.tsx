@@ -6,7 +6,6 @@ import { SHOP } from '../lib/config'
 import { euro } from '../lib/data'
 import { useSeo } from '../lib/seo'
 import { ProductVisual } from '../components/ProductCard'
-import { FreeShippingBar, PromoField } from '../components/CartDrawer'
 import { DeliveryEstimate, PaymentBadges } from '../components/Trust'
 
 type Form = { email: string; firstName: string; lastName: string; address: string; zip: string; city: string; phone: string }
@@ -218,9 +217,6 @@ export default function Checkout() {
                 </li>
               ))}
             </ul>
-            <div className="mt-3 border-t border-ink-900/10 pt-4">
-              <PromoField />
-            </div>
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between"><dt>Sous-total</dt><dd>{euro(subtotal)}</dd></div>
               {discount > 0 && <div className="flex justify-between text-emerald-700"><dt>Réduction</dt><dd>−{euro(discount)}</dd></div>}
@@ -228,11 +224,6 @@ export default function Checkout() {
               <div className="flex justify-between border-t border-ink-900/10 pt-3 font-display text-2xl font-bold"><dt>Total</dt><dd>{euro(grand)}</dd></div>
               <p className="text-right text-xs text-slate-500">TVA incluse</p>
             </dl>
-            {mode === 'livraison' && shipping > 0 && (
-              <div className="mt-4">
-                <FreeShippingBar />
-              </div>
-            )}
           </div>
           <div className="flex items-start gap-3 rounded-2xl bg-white p-4 text-sm ring-1 ring-ink-900/5">
             <ShieldCheck size={20} className="shrink-0 text-gold-500" />

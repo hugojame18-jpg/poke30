@@ -11,13 +11,6 @@ import ProductCard, { ProductVisual, StockPill } from '../components/ProductCard
 import { DeliveryEstimate, PaymentBadges } from '../components/Trust'
 import NotFound from './NotFound'
 
-function bundleFor(p: Product): Product[] {
-  const others = PRODUCTS.filter((x) => x.slug !== p.slug && x.stock > 0)
-  if (p.tags.includes('30 ans')) return others.filter((x) => x.tags.includes('30 ans')).slice(0, 2)
-  if (p.universe === 'accessoires') return others.filter((x) => x.universe === 'accessoires').slice(0, 1)
-  return others.filter((x) => x.universe === 'accessoires').slice(0, 2)
-}
-
 function Accordion({ title, icon: Icon, children, defaultOpen = false }: { title: string; icon: typeof Truck; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
@@ -55,69 +48,10 @@ function NotifyMe({ product }: { product: Product }) {
   )
 }
 
-function Bundle({ product }: { product: Product }) {
-  const { addMany, qtyOf } = useCart()
-  const items = useMemo(() => [product, ...bundleFor(product)], [product])
-  const [picked, setPicked] = useState<Set<string>>(() => new Set(items.map((i) => i.slug)))
-  useEffect(() => setPicked(new Set(items.map((i) => i.slug))), [items])
-  if (items.length < 2 || product.stock <= 0) return null
-  const chosen = items.filter((i) => picked.has(i.slug) && i.stock > qtyOf(i.slug))
-  const total = chosen.reduce((s, i) => s + i.price, 0)
-
-  return (
-    <section className="mt-10 rounded-3xl bg-white p-6 ring-1 ring-ink-900/5">
-      <h2 className="font-display text-xl font-bold">{product.tags.includes('30 ans') ? 'Complétez votre collection 30 ans' : 'Souvent achetés ensemble'}</h2>
-      <ul className="mt-4 space-y-3">
-        {items.map((i, idx) => (
-          <li key={i.slug}>
-            <label className="flex cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                checked={picked.has(i.slug)}
-                disabled={idx === 0}
-                onChange={() =>
-                  setPicked((s) => {
-                    const n = new Set(s)
-                    if (n.has(i.slug)) n.delete(i.slug)
-                    else n.add(i.slug)
-                    return n
-                  })
-                }
-                className="h-4 w-4 accent-gold-500"
-              />
-              <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-100">
-                <ProductVisual product={i} />
-              </div>
-              <span className="line-clamp-1 flex-1 text-sm">
-                {idx === 0 && <strong>Cet article : </strong>}
-                {i.name}
-              </span>
-              <span className="text-sm font-bold">{euro(i.price)}</span>
-            </label>
-          </li>
-        ))}
-      </ul>
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-ink-900/10 pt-4">
-        <p>
-          Total : <span className="font-display text-2xl font-bold">{euro(total)}</span>
-        </p>
-        <button
-          onClick={() => addMany(chosen.map((i) => i.slug))}
-          disabled={!chosen.length}
-          className="rounded-full bg-ink-900 px-6 py-3 text-sm font-bold text-white transition hover:bg-ink-700 disabled:opacity-40"
-        >
-          Ajouter {chosen.length > 1 ? `les ${chosen.length}` : ''} au panier
-        </button>
-      </div>
-    </section>
-  )
-}
-
 export default function ProductPage() {
   const { slug = '' } = useParams()
   const product = getProduct(slug)
   const { add, qtyOf } = useCart()
-  const [qty, setQty] = useState(1)
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null)
   const [justAdded, setJustAdded] = useState(false)
   const [showSticky, setShowSticky] = useState(false)
@@ -153,7 +87,6 @@ export default function ProductPage() {
   })
 
   useEffect(() => {
-    setQty(1)
     if (!product) return
     track.viewItem(product)
     pushRecent(product.slug)
@@ -174,7 +107,7 @@ export default function ProductPage() {
   const related = PRODUCTS.filter((p) => p.universe === product.universe && p.slug !== slug).slice(0, 4)
 
   const buy = () => {
-    add(product.slug, Math.min(qty, max))
+    add(product.slug)
     setJustAdded(true)
     setTimeout(() => setJustAdded(false), 2000)
   }
@@ -307,7 +240,6 @@ export default function ProductPage() {
           </div>
         </div>
 
-        <Bundle product={product} />
       </div>
 
       {related.length > 0 && (

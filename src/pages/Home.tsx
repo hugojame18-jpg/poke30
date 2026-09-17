@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { ARTICLES, FAQ, PRODUCTS, UNIVERSES, universeOf } from '../lib/data'
 import ProductCard from '../components/ProductCard'
 import { Perks } from '../components/Footer'
-import AddAllButton from '../components/AddAllButton'
 import { GUARANTEES } from '../components/Trust'
 import { useSeo } from '../lib/seo'
 import { useRecent } from '../lib/recent'
@@ -114,10 +113,6 @@ export default function Home() {
             {collection30.map((p) => (
               <ProductCard key={p.slug} product={p} dark />
             ))}
-          </div>
-          <div className="mt-8 flex flex-col items-center gap-2 text-center">
-            <AddAllButton products={collection30.filter((p) => p.slug.startsWith('coffret-first-partners'))} label="Ajouter les First Partners 1G → 7G" dark />
-            <p className="text-xs text-white/50">Pour les collectionneurs qui veulent la série complète en une fois.</p>
           </div>
         </div>
       </section>

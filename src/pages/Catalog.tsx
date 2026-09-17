@@ -6,7 +6,6 @@ import ProductCard from '../components/ProductCard'
 import NotFound from './NotFound'
 import { useSeo } from '../lib/seo'
 import { track } from '../lib/analytics'
-import AddAllButton from '../components/AddAllButton'
 import { DeliveryEstimate } from '../components/Trust'
 
 const SORTS = {
@@ -87,7 +86,6 @@ export default function Catalog({ collection30 = false }: { collection30?: boole
           </p>
           {collection30 && (
             <div className="mt-6 flex flex-wrap items-center gap-4">
-              <AddAllButton products={PRODUCTS.filter((p) => p.slug.startsWith('coffret-first-partners'))} label="Ajouter les First Partners 1G → 7G" dark />
               <div className="text-white/80"><DeliveryEstimate compact /></div>
             </div>
           )}

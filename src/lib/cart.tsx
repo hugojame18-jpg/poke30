@@ -16,8 +16,7 @@ type CartCtx = {
   removePromo: () => void
   open: boolean
   setOpen: (v: boolean) => void
-  add: (slug: string, qty?: number, opts?: { silent?: boolean }) => void
-  addMany: (slugs: string[]) => void
+  add: (slug: string) => void
   setQty: (slug: string, qty: number) => void
   remove: (slug: string) => void
   clear: () => void
@@ -73,16 +72,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [lines, subtotal],
   )
 
-  const add = useCallback((slug: string, qty = 1, opts?: { silent?: boolean }) => {
+  const add = useCallback((slug: string) => {
     const p = getProduct(slug)
     if (!p) return
-    track.addToCart(p, qty)
-    setRaw((cur) => {
-      const ex = cur.find((l) => l.slug === slug)
-      if (ex) return cur.map((l) => (l.slug === slug ? { ...l, qty: clamp(slug, l.qty + qty) } : l))
-      return [...cur, { slug, qty: clamp(slug, qty) }]
-    })
-    if (!opts?.silent) setOpenState(true)
+    track.addToCart(p, 1)
+    // Un seul article par commande : le total doit correspondre à un lien de paiement (19,99 € ou 49,99 €)
+    setRaw([{ slug, qty: clamp(slug, 1) }])
+    setOpenState(true)
   }, [])
 
   const value = useMemo<CartCtx>(() => {
@@ -107,10 +103,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       open,
       setOpen,
       add,
-      addMany: (slugs) => {
-        slugs.forEach((s) => add(s, 1, { silent: true }))
-        setOpenState(true)
-      },
       setQty: (slug, qty) => {
         const cur = raw.find((l) => l.slug === slug)
         const p = getProduct(slug)
