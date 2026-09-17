@@ -73,7 +73,7 @@ export default function Footer() {
         <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <Link to="/" className="flex items-center gap-2">
-              <img src="/logo.webp" alt="" className="h-10 w-10 object-contain" />
+              <img src={`${import.meta.env.BASE_URL}logo.webp`} alt="" className="h-10 w-10 object-contain" />
               <span className="font-display text-2xl font-extrabold">
                 Poke<span className="text-gold-400">loot</span>
               </span>

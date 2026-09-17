@@ -36,7 +36,7 @@ const fp = (g: number): Product => ({
   universe: 'pokemon',
   lang: 'JPN',
   stock: [14, 9, 6, 11, 3, 8, 5][g - 1],
-  image: `/products/first-partners-${g}g.webp`,
+  image: `${import.meta.env.BASE_URL}products/first-partners-${g}g.webp`,
   tags: ['30 ans'],
   badge: '30e anniversaire',
   description: `Coffret japonais de la gamme 30th Celebration consacré aux trois Pokémon de départ de la génération ${g}. Produit officiel scellé, idéal pour compléter la collection anniversaire.`,
@@ -59,7 +59,7 @@ export const PRODUCTS: Product[] = [
     universe: 'pokemon',
     lang: 'FR',
     stock: 4,
-    image: '/products/etb-30e-anniversaire.webp',
+    image: `${import.meta.env.BASE_URL}products/etb-30e-anniversaire.webp`,
     tags: ['30 ans'],
     badge: '30e anniversaire',
     description:

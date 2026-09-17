@@ -129,7 +129,7 @@ export default function Header() {
             <Menu size={22} />
           </button>
           <Link to="/" className="flex shrink-0 items-center gap-2">
-            <img src="/logo.webp" alt="" className="h-11 w-11 object-contain" />
+            <img src={`${import.meta.env.BASE_URL}logo.webp`} alt="" className="h-11 w-11 object-contain" />
             <span className="font-display text-2xl font-extrabold tracking-tight">
               Poke<span className="text-gold-500">loot</span>
             </span>

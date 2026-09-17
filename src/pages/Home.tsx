@@ -90,7 +90,7 @@ export default function Home() {
                 style={{ ['--r' as string]: i ? '8deg' : '-8deg', animationDelay: `${i + 1}s` }}
                 className={`floaty absolute bottom-0 z-10 w-40 rounded-2xl bg-white p-2.5 shadow-2xl sm:w-48 ${i ? 'right-0' : 'left-0'}`}
               >
-                <img src={`/products/first-partners-${g}g.webp`} alt={`Coffret First Partners ${g}G`} className="aspect-square w-full object-contain" />
+                <img src={`${import.meta.env.BASE_URL}products/first-partners-${g}g.webp`} alt={`Coffret First Partners ${g}G`} className="aspect-square w-full object-contain" />
               </Link>
             ))}
           </div>
