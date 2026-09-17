@@ -1,0 +1,49 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Inter', sans-serif;
+  --color-ink-950: #060919;
+  --color-ink-900: #0b1026;
+  --color-ink-800: #121a3a;
+  --color-ink-700: #1c2650;
+  --color-gold-300: #ffe27a;
+  --color-gold-400: #ffd23f;
+  --color-gold-500: #f5b700;
+  --color-cream: #f7f4ec;
+}
+
+html { scroll-behavior: smooth; }
+body { @apply bg-cream text-ink-900 font-sans antialiased; }
+
+.holo {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform .25s ease;
+}
+.holo::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.45), transparent 45%),
+    linear-gradient(115deg, transparent 30%, rgba(255,226,122,.25) 45%, rgba(147,197,253,.25) 55%, transparent 70%);
+  mix-blend-mode: overlay;
+  opacity: 0; transition: opacity .25s;
+  pointer-events: none;
+}
+.holo:hover::after { opacity: 1; }
+
+@keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+.marquee { animation: marquee 40s linear infinite; }
+
+@keyframes floaty { 0%,100% { transform: translateY(0) rotate(var(--r,0deg)) } 50% { transform: translateY(-14px) rotate(var(--r,0deg)) } }
+.floaty { animation: floaty 6s ease-in-out infinite; }
+
+@keyframes slide-in { from { transform: translateX(100%) } to { transform: translateX(0) } }
+.slide-in { animation: slide-in .3s cubic-bezier(.2,.8,.2,1); }
+@keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+.fade-in { animation: fade-in .2s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee, .floaty, .slide-in, .fade-in { animation: none; }
+}
