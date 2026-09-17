@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, ShoppingBag, Trash2, X } from 'lucide-react'
 import { useCart } from '../lib/cart'
-import { SHOP } from '../lib/config'
 import { euro } from '../lib/data'
 import { track } from '../lib/analytics'
 import { ProductVisual } from './ProductCard'
@@ -26,16 +25,9 @@ export default function CartDrawer() {
   if (!open) return null
 
   const checkout = () => {
-    const net = subtotal - discount
-    const cents = Math.round(net * 100)
-    const url = SHOP.checkoutUrls[cents]
-    track.beginCheckout(lines, net)
+    track.beginCheckout(lines, subtotal - discount)
     setOpen(false)
-    if (url) {
-      window.location.href = url
-    } else {
-      navigate('/commande')
-    }
+    navigate('/commande')
   }
 
   return (
