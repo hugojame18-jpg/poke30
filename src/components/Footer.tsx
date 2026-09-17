@@ -78,15 +78,13 @@ export default function Footer() {
                 Poke <span className="text-gold-400">30</span>
               </span>
             </Link>
-            <p className="mt-4 text-sm text-white/60">Spécialiste français du TCG. Pokémon, One Piece, Yu-Gi-Oh! et cartes gradées, expédiés depuis la France.</p>
+            <p className="mt-4 text-sm text-white/60">Spécialiste français Pokémon : collection 30 ans et cartes gradées, expédiées depuis la France.</p>
           </div>
           <div>
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/40">Boutique</h4>
             <ul className="mt-4 space-y-2 text-sm text-white/80">
               <li><Link className="hover:text-gold-400" to="/collection-30-ans">Collection 30 ans</Link></li>
               <li><Link className="hover:text-gold-400" to="/boutique/pokemon">Pokémon</Link></li>
-              <li><Link className="hover:text-gold-400" to="/boutique/one-piece">One Piece</Link></li>
-              <li><Link className="hover:text-gold-400" to="/boutique/yu-gi-oh">Yu-Gi-Oh!</Link></li>
               <li><Link className="hover:text-gold-400" to="/boutique/gradees">Cartes gradées</Link></li>
             </ul>
           </div>
@@ -112,7 +110,7 @@ export default function Footer() {
         <div className="mt-14 flex flex-col justify-between gap-2 border-t border-white/10 pt-6 text-xs text-white/40 sm:flex-row">
           <p>© 2026 Poke 30 — Tous droits réservés.</p>
           <PaymentBadges dark />
-          <p>Pokémon, One Piece, Yu-Gi-Oh! et Magic sont des marques de leurs propriétaires respectifs.</p>
+          <p>Pokémon est une marque de Nintendo, Creatures Inc. et GAME FREAK inc.</p>
         </div>
       </div>
     </footer>

@@ -43,8 +43,8 @@ export default function Catalog({ collection30 = false }: { collection30?: boole
     return sorted
   }, [collection30, u, q, langs, stockOnly, sort])
 
-  const seoTitle = collection30 ? 'Collection Pokémon 30 ans — ETB & First Partners' : u ? `${u.label} — produits officiels` : 'Boutique TCG'
-  useSeo({ title: seoTitle, description: collection30 ? 'ETB français et coffrets First Partners japonais du 30e anniversaire Pokémon. Stocks limités, expédition depuis la France.' : `${u?.tagline ?? 'Pokémon, One Piece, Yu-Gi-Oh!, cartes gradées'} : produits officiels expédiés depuis la France.` })
+  const seoTitle = collection30 ? 'Collection Pokémon 30 ans — ETB & First Partners' : u ? `${u.label} — produits officiels` : 'Boutique Pokémon'
+  useSeo({ title: seoTitle, description: collection30 ? 'ETB français et coffrets First Partners japonais du 30e anniversaire Pokémon. Stocks limités, expédition depuis la France.' : `${u?.tagline ?? 'Pokémon et cartes gradées'} : produits officiels expédiés depuis la France.` })
   const listKey = list.map((p) => p.slug).join()
   useEffect(() => {
     track.viewList(seoTitle, list)

@@ -20,10 +20,10 @@ function PageHero({ eyebrow, title, text }: { eyebrow: string; title: string; te
 }
 
 export function Blog() {
-  useSeo({ title: 'Blog & guides TCG', description: 'Règles, conseils de collection et préparation de tournoi Pokémon, One Piece et Yu-Gi-Oh!.' })
+  useSeo({ title: 'Blog & guides Pokémon', description: 'Conseils de collection et de protection pour vos cartes Pokémon.' })
   return (
     <>
-      <PageHero eyebrow="Infos & guides" title="Le blog Poke 30" text="Règles, conseils de collection et préparation de tournoi." />
+      <PageHero eyebrow="Infos & guides" title="Le blog Poke 30" text="Conseils de collection et de protection pour vos cartes Pokémon." />
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-12 md:grid-cols-3">
         {ARTICLES.map((a) => {
           const u = universeOf(a.universe)

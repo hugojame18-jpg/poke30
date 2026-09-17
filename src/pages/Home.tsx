@@ -9,7 +9,6 @@ import { useSeo } from '../lib/seo'
 import { useRecent } from '../lib/recent'
 
 const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans'))
-const inStock = PRODUCTS.filter((p) => !p.tags.includes('30 ans') && p.universe !== 'gradees' && p.universe !== 'accessoires').slice(0, 4)
 const graded = PRODUCTS.filter((p) => p.universe === 'gradees')
 
 export function SectionHead({ eyebrow, title, to, dark = false }: { eyebrow: string; title: string; to?: string; dark?: boolean }) {
@@ -37,8 +36,8 @@ export default function Home() {
   const etb = PRODUCTS[0]
   const recent = useRecent()
   useSeo({
-    title: 'Poke 30 — Collection Pokémon 30 ans, One Piece & cartes gradées',
-    description: 'Spécialiste français du TCG : ETB 30e anniversaire, coffrets First Partners, One Piece, Yu-Gi-Oh! et cartes gradées. Produits officiels, livraison suivie depuis la France.',
+    title: 'Poke 30 — Collection Pokémon 30 ans & cartes gradées',
+    description: 'Spécialiste français Pokémon : ETB 30e anniversaire, coffrets First Partners et cartes gradées. Produits officiels, livraison suivie depuis la France.',
     image: etb.image,
   })
 
@@ -152,16 +151,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* EN STOCK */}
-      <section className="mx-auto max-w-7xl px-4 pb-20">
-        <SectionHead eyebrow="En stock" title="Disponible immédiatement" to="/boutique" />
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {inStock.map((p) => (
-            <ProductCard key={p.slug} product={p} />
-          ))}
-        </div>
-      </section>
-
       {/* GRADÉES */}
       <section className="mx-auto max-w-7xl px-4 pb-20">
         <div className="grid gap-8 rounded-3xl bg-white p-6 ring-1 ring-ink-900/5 md:p-10 lg:grid-cols-[1fr_2fr]">
@@ -205,7 +194,7 @@ export default function Home() {
           <div className="relative max-w-xl">
             <p className="text-xs font-bold uppercase tracking-[0.2em]">Expertise Poke 30</p>
             <h2 className="mt-3 font-display text-4xl font-extrabold tracking-tight md:text-5xl">Notre sélection, votre collection.</h2>
-            <p className="mt-4 text-lg text-ink-900/80">Spécialistes français du TCG, nous sélectionnons des produits officiels et les expédions depuis la France avec le soin qu’un collectionneur attend.</p>
+            <p className="mt-4 text-lg text-ink-900/80">Spécialistes français de Pokémon, nous sélectionnons des produits officiels et les expédions depuis la France avec le soin qu’un collectionneur attend.</p>
             <Link to="/faq#contact" className="mt-8 inline-flex items-center gap-2 rounded-full bg-ink-900 px-6 py-3.5 font-bold text-white hover:bg-ink-700">
               Nous contacter <ArrowRight size={16} />
             </Link>

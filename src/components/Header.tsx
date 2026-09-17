@@ -12,8 +12,6 @@ const NAV = [
   { to: '/boutique?tri=ventes', label: 'Meilleures ventes' },
   { to: '/collection-30-ans', label: 'Collection 30 ans', hot: true },
   { to: '/boutique/pokemon', label: 'Pokémon' },
-  { to: '/boutique/one-piece', label: 'One Piece' },
-  { to: '/boutique/yu-gi-oh', label: 'Yu-Gi-Oh!' },
   { to: '/boutique/gradees', label: 'Cartes gradées' },
   { to: '/blog', label: 'Blog' },
 ]
