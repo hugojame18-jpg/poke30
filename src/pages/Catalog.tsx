@@ -98,7 +98,7 @@ export default function Catalog({ collection30 = false }: { collection30?: boole
             <Link to="/boutique" className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ring-1 ${!u ? 'bg-ink-900 text-white ring-ink-900' : 'bg-white ring-ink-900/10 hover:ring-ink-900/30'}`}>
               Tout
             </Link>
-            {UNIVERSES.map((x) => (
+            {UNIVERSES.filter((x) => PRODUCTS.some((p) => p.universe === x.id)).map((x) => (
               <Link
                 key={x.id}
                 to={`/boutique/${x.id}`}

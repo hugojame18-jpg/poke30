@@ -120,8 +120,8 @@ export default function Home() {
       {/* UNIVERS */}
       <section className="mx-auto max-w-7xl px-4 py-20">
         <SectionHead eyebrow="Catalogue" title="Explorer par univers" />
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-          {UNIVERSES.map((u) => (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+          {UNIVERSES.filter((x) => PRODUCTS.some((p) => p.universe === x.id)).map((u) => (
             <Link
               key={u.id}
               to={`/boutique/${u.id}`}

@@ -75,7 +75,7 @@ export default function Footer() {
             <Link to="/" className="flex items-center gap-2">
               <img src={`${import.meta.env.BASE_URL}logo.webp`} alt="" className="h-10 w-10 object-contain" />
               <span className="font-display text-2xl font-extrabold">
-                Poke<span className="text-gold-400">loot</span>
+                Poke <span className="text-gold-400">30</span>
               </span>
             </Link>
             <p className="mt-4 text-sm text-white/60">Spécialiste français du TCG. Pokémon, One Piece, Yu-Gi-Oh! et cartes gradées, expédiés depuis la France.</p>
@@ -88,7 +88,6 @@ export default function Footer() {
               <li><Link className="hover:text-gold-400" to="/boutique/one-piece">One Piece</Link></li>
               <li><Link className="hover:text-gold-400" to="/boutique/yu-gi-oh">Yu-Gi-Oh!</Link></li>
               <li><Link className="hover:text-gold-400" to="/boutique/gradees">Cartes gradées</Link></li>
-              <li><Link className="hover:text-gold-400" to="/boutique/accessoires">Accessoires</Link></li>
             </ul>
           </div>
           <div>
