@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Bell, Check, ChevronDown, Minus, PackageCheck, Plus, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
+import { Bell, Check, ChevronDown, PackageCheck, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
 import { PRODUCTS, euro, getProduct, universeOf, type Product } from '../lib/data'
 import { useCart } from '../lib/cart'
 import { SHOP } from '../lib/config'

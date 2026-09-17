@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, Check, Minus, Plus, ShoppingBag, Tag, Trash2, Truck, X } from 'lucide-react'
+import { ArrowRight, Check, Plus, ShoppingBag, Tag, Trash2, Truck, X } from 'lucide-react'
 import { useCart } from '../lib/cart'
 import { SHOP } from '../lib/config'
 import { PRODUCTS, euro } from '../lib/data'
@@ -81,7 +81,7 @@ export function FreeShippingBar() {
 }
 
 export default function CartDrawer() {
-  const { open, setOpen, lines, subtotal, discount, setQty, remove, count, add, qtyOf } = useCart()
+  const { open, setOpen, lines, subtotal, discount, remove, count, add, qtyOf } = useCart()
   const navigate = useNavigate()
 
   useEffect(() => {
