@@ -76,7 +76,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const p = getProduct(slug)
     if (!p) return
     track.addToCart(p, 1)
-    // Un seul article par commande : le total doit correspondre à un lien de paiement (19,99 € ou 49,99 €)
+    // Un seul article par commande : le total doit correspondre à un lien de paiement (19,99 € ou 79,99 €)
     setRaw([{ slug, qty: clamp(slug, 1) }])
     setOpenState(true)
   }, [])
