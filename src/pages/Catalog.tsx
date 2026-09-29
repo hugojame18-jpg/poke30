@@ -40,6 +40,8 @@ export default function Catalog({ collection30 = false }: { collection30?: boole
     if (sort === 'ventes') sorted.sort((a, b) => b.sales - a.sales)
     if (sort === 'prix-asc') sorted.sort((a, b) => a.price - b.price)
     if (sort === 'prix-desc') sorted.sort((a, b) => b.price - a.price)
+    // Les produits à paraître n'ont pas encore de prix : toujours en fin de liste
+    sorted.sort((a, b) => Number(!!a.upcoming) - Number(!!b.upcoming))
     return sorted
   }, [collection30, u, q, langs, stockOnly, sort])
 

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowRight, Bell, Check, ChevronDown, PackageCheck, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
-import { PRODUCTS, euro, getProduct, universeOf, type Product } from '../lib/data'
+import { ArrowRight, Bell, CalendarClock, Check, ChevronDown, PackageCheck, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
+import { PRODUCTS, euro, getProduct, releaseDate, universeOf, type Product } from '../lib/data'
 import { useCart } from '../lib/cart'
 import { SHOP } from '../lib/config'
 import { track } from '../lib/analytics'
@@ -70,7 +70,7 @@ export default function ProductPage() {
         sku: product.slug,
         brand: { '@type': 'Brand', name: 'Pokémon' },
         category: universeOf(product.universe).label,
-        offers: {
+        offers: product.upcoming ? undefined : {
           '@type': 'Offer',
           price: product.price.toFixed(2),
           priceCurrency: 'EUR',
@@ -82,7 +82,7 @@ export default function ProductPage() {
     [product],
   )
   useSeo({
-    title: product ? `${product.name} — ${euro(product.price)}` : 'Produit introuvable',
+    title: product ? (product.upcoming ? `${product.name} — sortie le ${releaseDate(product)}` : `${product.name} — ${euro(product.price)}`) : 'Produit introuvable',
     description: product ? `${product.short} Produit officiel, expédié depuis la France en livraison suivie.` : '',
     image: product?.image,
     jsonLd: jsonLd || undefined,
@@ -144,7 +144,9 @@ export default function ProductPage() {
                 )}
               </div>
               <div className="absolute left-5 top-5 flex gap-2">
-                {product.badge && <span className="rounded-full bg-gold-400 px-3 py-1.5 text-xs font-bold uppercase text-ink-900">{product.badge}</span>}
+                {product.badge && (
+                  <span className={`rounded-full px-3 py-1.5 text-xs font-bold uppercase ${product.upcoming ? 'bg-sky-500 text-white' : 'bg-gold-400 text-ink-900'}`}>{product.badge}</span>
+                )}
                 <span className="rounded-full bg-ink-900 px-3 py-1.5 text-xs font-bold text-white">{product.lang}</span>
               </div>
             </div>
@@ -171,10 +173,16 @@ export default function ProductPage() {
             <h1 className="mt-2 font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{product.name}</h1>
             <p className="mt-3 text-lg text-slate-600">{product.short}</p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span className="font-display text-4xl font-extrabold">{euro(product.price)}</span>
-              <StockPill stock={product.stock} />
-            </div>
+            {product.upcoming ? (
+              <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-sky-500/10 px-4 py-2 font-display text-lg font-bold text-sky-600">
+                <CalendarClock size={20} /> Sortie le {releaseDate(product)}
+              </p>
+            ) : (
+              <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+                <span className="font-display text-4xl font-extrabold">{euro(product.price)}</span>
+                <StockPill stock={product.stock} />
+              </div>
+            )}
             {product.price < SHOP.freeShippingFrom && !soldOut && (
               <p className="mt-2 text-sm text-slate-500">
                 Livraison offerte dès {euro(SHOP.freeShippingFrom)} d’achat
@@ -182,7 +190,17 @@ export default function ProductPage() {
             )}
 
             <div ref={buyRef} className="mt-7 space-y-4 rounded-3xl bg-white p-5 ring-1 ring-ink-900/5">
-              {soldOut ? (
+              {product.upcoming ? (
+                <>
+                  <p className="font-semibold">Bientôt disponible sur Poke 30</p>
+                  <p className="text-sm text-slate-600">
+                    Ce produit sort le {releaseDate(product)}. Le prix et la commande seront ouverts sur cette page dès sa sortie.
+                  </p>
+                  <Link to="/collection-30-ans" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-900 px-6 py-4 font-bold text-white transition hover:bg-ink-700">
+                    Voir la collection 30 ans disponible <ArrowRight size={18} />
+                  </Link>
+                </>
+              ) : soldOut ? (
                 <NotifyMe product={product} />
               ) : (
                 <>

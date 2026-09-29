@@ -18,6 +18,7 @@ const NAV = [
 
 const ANNOUNCES = [
   'Collection Pokémon 30 ans disponible',
+  'Booster Bundle & Mini Tins 30th Celebration : sortie le 2 octobre',
   'Produits 100 % officiels',
   'Livraison suivie depuis la France',
   `Livraison offerte dès ${euro(SHOP.freeShippingFrom)}`,
@@ -76,7 +77,7 @@ function SearchBox({ onDone }: { onDone?: () => void }) {
                 <ProductVisual product={p} />
               </div>
               <span className="line-clamp-1 flex-1 text-sm font-medium">{p.name}</span>
-              <span className="text-sm font-bold">{euro(p.price)}</span>
+              <span className={`text-sm font-bold ${p.upcoming ? 'text-sky-500' : ''}`}>{p.upcoming ? 'Bientôt' : euro(p.price)}</span>
             </button>
           ))}
         </div>

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, ChevronDown, Flame, Sparkles } from 'lucide-react'
+import { ArrowRight, CalendarClock, ChevronDown, Flame, Sparkles } from 'lucide-react'
 import { useState } from 'react'
-import { ARTICLES, FAQ, PRODUCTS, UNIVERSES, universeOf } from '../lib/data'
+import { ARTICLES, FAQ, PRODUCTS, UNIVERSES, releaseDate, universeOf } from '../lib/data'
 import { SHOP } from '../lib/config'
 import ProductCard from '../components/ProductCard'
 import { Perks } from '../components/Footer'
@@ -9,7 +9,8 @@ import { GUARANTEES } from '../components/Trust'
 import { useSeo } from '../lib/seo'
 import { useRecent } from '../lib/recent'
 
-const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans'))
+const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans') && !p.upcoming)
+const upcoming = PRODUCTS.filter((p) => p.upcoming)
 const graded = PRODUCTS.filter((p) => p.universe === 'gradees')
 const universes = UNIVERSES.map((u) => ({ ...u, products: PRODUCTS.filter((p) => p.universe === u.id) })).filter((u) => u.products.length)
 
@@ -129,6 +130,36 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* BIENTÔT DISPONIBLE */}
+      {upcoming.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 pt-20">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-indigo-700 p-6 text-white md:p-10">
+            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
+            <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_1.4fr]">
+              <div>
+                <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em]">
+                  <CalendarClock size={14} /> Bientôt disponible
+                </p>
+                <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
+                  Sortie le {releaseDate(upcoming[0])}
+                </h2>
+                <p className="mt-3 max-w-md text-white/80">
+                  Les nouveautés 30th Celebration arrivent chez Poke 30. Les commandes ouvriront sur le site dès leur sortie.
+                </p>
+              </div>
+              <div className={`grid gap-4 ${upcoming.length > 1 ? 'grid-cols-2' : 'max-w-xs'}`}>
+                {upcoming.map((p) => (
+                  <Link key={p.slug} to={`/produit/${p.slug}`} className="group rounded-2xl bg-white p-3 text-ink-900 shadow-2xl transition hover:-translate-y-1">
+                    <img src={p.image} alt={p.name} loading="lazy" width={400} height={400} className="aspect-square w-full rounded-xl object-contain transition duration-500 group-hover:scale-105" />
+                    <p className="mt-2 line-clamp-2 px-1 text-sm font-bold leading-snug">{p.name}</p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* UNIVERS */}
       <section className="mx-auto max-w-7xl px-4 py-20">

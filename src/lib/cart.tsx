@@ -74,7 +74,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const add = useCallback((slug: string) => {
     const p = getProduct(slug)
-    if (!p) return
+    if (!p || p.upcoming) return
     track.addToCart(p, 1)
     // Un seul article par commande : le total doit correspondre à un lien de paiement (19,99 € ou 79,99 €)
     setRaw([{ slug, qty: clamp(slug, 1) }])

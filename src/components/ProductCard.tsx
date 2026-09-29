@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Check, ShoppingBag } from 'lucide-react'
-import { euro, universeOf, type Product } from '../lib/data'
+import { CalendarClock, Check, ShoppingBag } from 'lucide-react'
+import { euro, releaseDate, universeOf, type Product } from '../lib/data'
 import { useCart } from '../lib/cart'
 import { useState, type MouseEvent } from 'react'
 
@@ -66,7 +66,7 @@ export default function ProductCard({ product, dark = false }: { product: Produc
         </div>
         <div className="absolute bottom-5 left-5 right-5 flex flex-wrap gap-1.5">
           {product.badge && (
-            <span className="rounded-full bg-gold-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-ink-900 shadow">{product.badge}</span>
+            <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide shadow ${product.upcoming ? 'bg-sky-500 text-white' : 'bg-gold-400 text-ink-900'}`}>{product.badge}</span>
           )}
         </div>
         <span className="absolute right-5 top-5 rounded-full bg-ink-900/85 px-2 py-1 text-[10px] font-bold text-white backdrop-blur">{product.lang}</span>
@@ -76,7 +76,21 @@ export default function ProductCard({ product, dark = false }: { product: Produc
         <Link to={`/produit/${product.slug}`} className="line-clamp-2 min-h-10 text-sm font-semibold leading-snug hover:underline">
           {product.name}
         </Link>
-        <StockPill stock={product.stock} />
+        {product.upcoming ? (
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-500">
+            <CalendarClock size={14} /> Sortie le {releaseDate(product)}
+          </span>
+        ) : (
+          <StockPill stock={product.stock} />
+        )}
+        {product.upcoming ? (
+          <Link
+            to={`/produit/${product.slug}`}
+            className={`mt-auto inline-flex items-center justify-center rounded-full px-3.5 py-2 text-xs font-bold ring-1 transition ${dark ? 'ring-white/20 hover:bg-white/5' : 'ring-ink-900/15 hover:bg-ink-900/5'}`}
+          >
+            Bientôt disponible
+          </Link>
+        ) : (
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
           <span className="font-display text-xl font-bold">{euro(product.price)}</span>
           <button
@@ -93,6 +107,7 @@ export default function ProductCard({ product, dark = false }: { product: Produc
             {added || inCart ? <Check size={14} /> : <ShoppingBag size={14} />} {added ? 'Ajouté' : soldOut ? 'Épuisé' : inCart ? 'Au panier' : 'Ajouter'}
           </button>
         </div>
+        )}
       </div>
     </article>
   )

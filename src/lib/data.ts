@@ -17,6 +17,8 @@ export interface Product {
   details: [string, string][]
   addedAt: string
   sales: number
+  /** Date de sortie (AAAA-MM-JJ) d'un produit pas encore commandable : ni prix ni bouton panier tant qu'il est renseigné */
+  upcoming?: string
 }
 
 export const UNIVERSES: { id: Universe; label: string; tagline: string; from: string; to: string }[] = [
@@ -69,6 +71,51 @@ export const PRODUCTS: Product[] = [
     sales: 240,
   },
   ...[1, 2, 3, 4, 5, 6, 7].map(fp),
+  // À paraître : ajouter le prix et le lien de paiement correspondant (config.ts) puis retirer `upcoming` à la sortie
+  {
+    slug: 'booster-bundle-30th-celebration',
+    name: 'Booster Bundle — 30th Celebration',
+    short: 'Le bundle de 6 boosters de la collection 30th Celebration.',
+    price: 0,
+    universe: 'pokemon',
+    lang: 'EN',
+    stock: 0,
+    image: `${import.meta.env.BASE_URL}products/booster-bundle-30th-celebration.webp`,
+    tags: ['30 ans'],
+    badge: 'Bientôt disponible',
+    description:
+      'Le Booster Bundle de la collection 30th Celebration, avec Pikachu, Mew et Mewtwo en couverture : 6 boosters réunis dans une boîte aux couleurs de l’anniversaire. Produit officiel scellé.',
+    details: [
+      ['Contenu', '6 boosters'],
+      ['Extension', '30th Celebration'],
+      ['État', 'Neuf, scellé d’usine'],
+    ],
+    addedAt: '2026-10-02',
+    sales: 0,
+    upcoming: '2026-10-02',
+  },
+  {
+    slug: 'display-mini-tins-30th-celebration',
+    name: 'Display Mini Tins — 30th Celebration',
+    short: 'Le présentoir de mini boîtes métal de la collection 30th Celebration.',
+    price: 0,
+    universe: 'pokemon',
+    lang: 'EN',
+    stock: 0,
+    image: `${import.meta.env.BASE_URL}products/mini-tins-30th-celebration.webp`,
+    tags: ['30 ans'],
+    badge: 'Bientôt disponible',
+    description:
+      'Le présentoir complet de mini boîtes métal 30th Celebration, illustrées aux couleurs de l’anniversaire (Miaouss, Électhor, Mentali…). Produit officiel scellé.',
+    details: [
+      ['Format', 'Présentoir de mini boîtes métal'],
+      ['Extension', '30th Celebration'],
+      ['État', 'Neuf, scellé d’usine'],
+    ],
+    addedAt: '2026-10-02',
+    sales: 0,
+    upcoming: '2026-10-02',
+  },
   {
     slug: 'charmeleon-169-165-sv2a-cgc-8-5',
     name: 'Reptincel 169/165 – Pokémon Card 151 – CGC 8.5',
@@ -86,6 +133,8 @@ export const PRODUCTS: Product[] = [
 ]
 
 export const getProduct = (slug: string) => PRODUCTS.find((p) => p.slug === slug)
+export const releaseDate = (p: Product) =>
+  p.upcoming ? new Date(`${p.upcoming}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''
 export const universeOf = (id: Universe) => UNIVERSES.find((u) => u.id === id)!
 
 export const euro = (n: number) => n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
