@@ -119,7 +119,7 @@ export default function Checkout() {
   return (
     <div className="mx-auto max-w-xl px-4 py-6 sm:py-10">
       <div className="mb-5 flex items-center justify-between">
-        <Link to="/" className="inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-ink-900">
+        <Link to={`/produit/${lines[0].slug}`} className="inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-ink-900">
           <ArrowLeft size={16} /> Retour
         </Link>
         <p className="flex items-center gap-1.5 text-sm font-semibold text-emerald-700">

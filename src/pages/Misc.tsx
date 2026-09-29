@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { deliveryWindow } from '../lib/delivery'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, ChevronDown, Mail, MapPin } from 'lucide-react'
+import { ArrowLeft, ChevronDown, Clock, Mail, MapPin, PackageSearch, Truck } from 'lucide-react'
 import { ARTICLES, FAQ, universeOf } from '../lib/data'
 import { SHOP } from '../lib/config'
 import { useSeo } from '../lib/seo'
@@ -74,8 +75,14 @@ export function ArticlePage() {
   )
 }
 
+const FAQ_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+}
+
 export function FaqPage() {
-  useSeo({ title: 'Questions fréquentes', description: 'Livraison, retrait, commandes et authenticité : toutes les réponses.' })
+  useSeo({ title: 'Questions fréquentes', description: 'Livraison, retrait, commandes et authenticité : toutes les réponses.', jsonLd: FAQ_LD })
   const [open, setOpen] = useState<number | null>(0)
   return (
     <>
@@ -108,15 +115,41 @@ export function FaqPage() {
 }
 
 export function Account() {
-  useSeo({ title: 'Mon compte', description: 'Espace client Poke 30.' })
+  useSeo({ title: 'Suivre ma commande', description: 'Suivi de commande, délais de livraison et contact Poke 30.' })
+  const { min, max } = deliveryWindow()
+  const steps = [
+    { icon: PackageSearch, title: 'Préparation', text: `Votre commande est vérifiée et emballée sous ${SHOP.prepDays * 24} h ouvrées.` },
+    { icon: Truck, title: 'Expédition suivie', text: 'Le numéro de suivi vous est envoyé par e-mail dès le départ du colis.' },
+    { icon: Clock, title: 'Livraison', text: `Pour une commande passée aujourd’hui : entre ${min} et ${max}.` },
+  ]
   return (
     <>
-      <PageHero eyebrow="Le Club Poke 30" title="Mon compte" text="Suivez vos commandes et cumulez des points sur vos achats." />
-      <div className="mx-auto max-w-md px-4 py-12">
-        <div className="rounded-3xl bg-white p-8 text-center ring-1 ring-ink-900/5">
-          <p className="text-slate-600">L’espace client sera branché sur votre système d’authentification.</p>
-          <Link to="/boutique" className="mt-6 inline-block rounded-full bg-ink-900 px-6 py-3 font-bold text-white">Retour à la boutique</Link>
-        </div>
+      <PageHero eyebrow="Espace client" title="Suivre ma commande" text="Toutes les étapes de votre commande, de la préparation à la livraison." />
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 lg:grid-cols-[2fr_1fr]">
+        <ol className="space-y-4">
+          {steps.map(({ icon: Icon, title, text }, i) => (
+            <li key={title} className="flex gap-4 rounded-3xl bg-white p-6 ring-1 ring-ink-900/5">
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gold-400/15 text-gold-500">
+                <Icon size={24} />
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Étape {i + 1}</p>
+                <h2 className="mt-1 font-display text-lg font-bold">{title}</h2>
+                <p className="mt-1 text-slate-600">{text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <aside className="self-start rounded-3xl bg-ink-900 p-8 text-white">
+          <h2 className="font-display text-2xl font-bold">Une question sur votre commande ?</h2>
+          <p className="mt-2 text-white/60">Écrivez-nous avec votre nom et l’adresse e-mail utilisée lors de la commande, nous vous répondons rapidement.</p>
+          <a href={`mailto:${SHOP.email}?subject=${encodeURIComponent('Suivi de ma commande')}`} className="mt-6 flex items-center gap-3 rounded-2xl bg-white/5 p-4 hover:bg-white/10">
+            <Mail className="text-gold-400" size={20} /> {SHOP.email}
+          </a>
+          <Link to="/faq" className="mt-3 block rounded-2xl bg-white/5 p-4 text-center font-semibold hover:bg-white/10">
+            Voir les questions fréquentes
+          </Link>
+        </aside>
       </div>
     </>
   )

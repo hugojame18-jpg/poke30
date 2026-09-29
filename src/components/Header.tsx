@@ -20,7 +20,7 @@ const ANNOUNCES = [
   'Collection Pokémon 30 ans disponible',
   'Produits 100 % officiels',
   'Livraison suivie depuis la France',
-  `Livraison offerte dès ${SHOP.freeShippingFrom} €`,
+  `Livraison offerte dès ${euro(SHOP.freeShippingFrom)}`,
   `Retrait gratuit à ${SHOP.pickupCity}`,
 ]
 
@@ -59,7 +59,8 @@ function SearchBox({ onDone }: { onDone?: () => void }) {
         onChange={(e) => setQ(e.target.value)}
         onFocus={() => setFocus(true)}
         onBlur={() => setTimeout(() => setFocus(false), 150)}
-        placeholder="Rechercher un produit, une extension, une licence…"
+        placeholder="Rechercher un coffret, une carte gradée…"
+        aria-label="Rechercher un produit"
         className="h-11 w-full rounded-full border border-ink-900/10 bg-white pl-11 pr-4 text-sm outline-none transition focus:border-gold-500 focus:ring-4 focus:ring-gold-400/25"
       />
       {focus && results.length > 0 && (
@@ -92,7 +93,22 @@ export default function Header() {
   const prevCount = useRef(count)
   const [bump, setBump] = useState(false)
 
-  useEffect(() => setMobile(false), [location])
+  // Ferme le menu mobile à chaque changement de page
+  const [prevLocation, setPrevLocation] = useState(location)
+  if (prevLocation !== location) {
+    setPrevLocation(location)
+    setMobile(false)
+  }
+  useEffect(() => {
+    if (!mobile) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMobile(false)
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [mobile])
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', on, { passive: true })
@@ -110,7 +126,8 @@ export default function Header() {
 
   return (
     <>
-      <div className="overflow-hidden bg-ink-950 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-300">
+      <p className="sr-only">{ANNOUNCES.join(' · ')}</p>
+      <div aria-hidden="true" className="overflow-hidden bg-ink-950 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-300">
         <div className="marquee flex w-max gap-12 whitespace-nowrap">
           {[...ANNOUNCES, ...ANNOUNCES].map((a, i) => (
             <span key={i} className="flex items-center gap-12">
@@ -135,7 +152,7 @@ export default function Header() {
             <SearchBox />
           </div>
           <div className="ml-auto flex items-center gap-1">
-            <Link to="/compte" className="rounded-full p-2.5 hover:bg-ink-900/5" aria-label="Mon compte">
+            <Link to="/compte" className="rounded-full p-2.5 hover:bg-ink-900/5" aria-label="Suivre ma commande">
               <User size={21} />
             </Link>
             <button onClick={() => setOpen(true)} className="relative rounded-full p-2.5 hover:bg-ink-900/5" aria-label={`Panier, ${count} articles`}>
@@ -175,9 +192,9 @@ export default function Header() {
       </header>
 
       {mobile && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
           <div className="fade-in absolute inset-0 bg-ink-950/60" onClick={() => setMobile(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-80 max-w-[85vw] flex-col bg-cream p-5 shadow-2xl">
+          <aside className="slide-in-left absolute inset-y-0 left-0 flex w-80 max-w-[85vw] flex-col bg-cream p-5 shadow-2xl">
             <div className="mb-6 flex items-center justify-between">
               <span className="font-display text-xl font-extrabold">Menu</span>
               <button onClick={() => setMobile(false)} className="rounded-full p-2 hover:bg-ink-900/5" aria-label="Fermer">
@@ -187,8 +204,9 @@ export default function Header() {
             <ul className="space-y-1">
               {NAV.map((n) => (
                 <li key={n.to}>
-                  <Link to={n.to} className="block rounded-xl px-3 py-3 font-semibold hover:bg-white">
+                  <Link to={n.to} className="flex items-center justify-between rounded-xl px-3 py-3 font-semibold hover:bg-white">
                     {n.label}
+                    {n.hot && <span className="rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase text-white">Nouveau</span>}
                   </Link>
                 </li>
               ))}
@@ -197,7 +215,15 @@ export default function Header() {
                   Aide & FAQ
                 </Link>
               </li>
+              <li>
+                <Link to="/compte" className="block rounded-xl px-3 py-3 font-semibold hover:bg-white">
+                  Suivre ma commande
+                </Link>
+              </li>
             </ul>
+            <p className="mt-auto rounded-2xl bg-white p-4 text-sm text-slate-600">
+              Une question ? <a href={`mailto:${SHOP.email}`} className="font-semibold text-ink-900 underline">{SHOP.email}</a>
+            </p>
           </aside>
         </div>
       )}

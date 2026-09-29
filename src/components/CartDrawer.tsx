@@ -5,10 +5,10 @@ import { useCart } from '../lib/cart'
 import { euro } from '../lib/data'
 import { track } from '../lib/analytics'
 import { ProductVisual } from './ProductCard'
-import { PaymentBadges } from './Trust'
+import { DeliveryEstimate, PaymentBadges } from './Trust'
 
 export default function CartDrawer() {
-  const { open, setOpen, lines, subtotal, discount, remove, count } = useCart()
+  const { open, setOpen, lines, subtotal, discount, shipping, total, remove, count } = useCart()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function CartDrawer() {
   if (!open) return null
 
   const checkout = () => {
-    track.beginCheckout(lines, subtotal - discount)
+    track.beginCheckout(lines, total)
     setOpen(false)
     navigate('/commande')
   }
@@ -79,6 +79,9 @@ export default function CartDrawer() {
                   </li>
                 ))}
               </ul>
+              <div className="mx-5 mb-4 rounded-2xl bg-emerald-50 p-3 text-emerald-900">
+                <DeliveryEstimate compact />
+              </div>
             </div>
 
             <div className="space-y-3 border-t border-ink-900/10 bg-white px-5 py-4">
@@ -92,11 +95,19 @@ export default function CartDrawer() {
                   <span>−{euro(discount)}</span>
                 </div>
               )}
+              <div className="flex justify-between text-sm">
+                <span>Livraison suivie</span>
+                <span className={shipping ? '' : 'font-semibold text-emerald-700'}>{shipping ? euro(shipping) : 'Offerte'}</span>
+              </div>
+              <div className="flex justify-between border-t border-ink-900/10 pt-3 font-display text-lg font-bold">
+                <span>Total</span>
+                <span>{euro(total)}</span>
+              </div>
               <button
                 onClick={checkout}
                 className="group flex w-full items-center justify-center gap-2 rounded-full bg-gold-400 py-4 font-bold text-ink-900 shadow-lg shadow-gold-400/25 transition hover:bg-gold-300"
               >
-                Commander · {euro(subtotal - discount)} <ArrowRight size={18} className="transition group-hover:translate-x-1" />
+                Commander · {euro(total)} <ArrowRight size={18} className="transition group-hover:translate-x-1" />
               </button>
               <PaymentBadges className="justify-center" />
             </div>

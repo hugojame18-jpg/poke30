@@ -63,6 +63,7 @@ export default function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="votre@email.fr"
+                aria-label="Adresse e-mail"
                 className="h-12 flex-1 rounded-full bg-white/10 px-5 outline-none ring-1 ring-white/15 placeholder:text-white/40 focus:ring-gold-400"
               />
               <button className="h-12 rounded-full bg-gold-400 px-6 font-bold text-ink-900 hover:bg-gold-300">S’inscrire</button>
@@ -94,6 +95,7 @@ export default function Footer() {
               <li><Link className="hover:text-gold-400" to="/faq">Questions fréquentes</Link></li>
               <li><Link className="hover:text-gold-400" to="/faq#contact">Nous contacter</Link></li>
               <li><Link className="hover:text-gold-400" to="/blog">Blog & guides</Link></li>
+              <li><Link className="hover:text-gold-400" to="/compte">Suivre ma commande</Link></li>
             </ul>
           </div>
           <div>
@@ -108,7 +110,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col justify-between gap-2 border-t border-white/10 pt-6 text-xs text-white/40 sm:flex-row">
-          <p>© 2026 Poke 30 — Tous droits réservés.</p>
+          <p>© {new Date().getFullYear()} {SHOP.name} — Tous droits réservés.</p>
           <PaymentBadges dark />
           <p>Pokémon est une marque de Nintendo, Creatures Inc. et GAME FREAK inc.</p>
         </div>

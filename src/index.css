@@ -16,6 +16,10 @@
 html { scroll-behavior: smooth; }
 body { @apply bg-cream text-ink-900 font-sans antialiased; }
 
+/* Contour de focus visible pour la navigation au clavier */
+:focus-visible { outline: 2px solid var(--color-gold-500); outline-offset: 2px; }
+input:focus-visible, select:focus-visible { outline: none; }
+
 .holo {
   position: relative;
   transform-style: preserve-3d;
@@ -41,9 +45,12 @@ body { @apply bg-cream text-ink-900 font-sans antialiased; }
 
 @keyframes slide-in { from { transform: translateX(100%) } to { transform: translateX(0) } }
 .slide-in { animation: slide-in .3s cubic-bezier(.2,.8,.2,1); }
+@keyframes slide-in-left { from { transform: translateX(-100%) } to { transform: translateX(0) } }
+.slide-in-left { animation: slide-in-left .3s cubic-bezier(.2,.8,.2,1); }
 @keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
 .fade-in { animation: fade-in .2s ease; }
 
 @media (prefers-reduced-motion: reduce) {
-  .marquee, .floaty, .slide-in, .fade-in { animation: none; }
+  .marquee, .floaty, .slide-in, .slide-in-left, .fade-in { animation: none; }
+  html { scroll-behavior: auto; }
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { getProduct, type Product } from './data'
 
 const KEY = 'pokeloot-recent'
@@ -20,8 +20,5 @@ export function pushRecent(slug: string) {
 }
 
 export function useRecent(exclude?: string): Product[] {
-  const get = useCallback(() => read().filter((s) => s !== exclude).map(getProduct).filter((p): p is Product => !!p), [exclude])
-  const [list, setList] = useState(get)
-  useEffect(() => setList(get()), [get])
-  return list
+  return useMemo(() => read().filter((s) => s !== exclude).map(getProduct).filter((p): p is Product => !!p), [exclude])
 }

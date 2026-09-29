@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, ChevronDown, Flame, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { ARTICLES, FAQ, PRODUCTS, UNIVERSES, universeOf } from '../lib/data'
+import { SHOP } from '../lib/config'
 import ProductCard from '../components/ProductCard'
 import { Perks } from '../components/Footer'
 import { GUARANTEES } from '../components/Trust'
@@ -10,6 +11,17 @@ import { useRecent } from '../lib/recent'
 
 const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans'))
 const graded = PRODUCTS.filter((p) => p.universe === 'gradees')
+const universes = UNIVERSES.map((u) => ({ ...u, products: PRODUCTS.filter((p) => p.universe === u.id) })).filter((u) => u.products.length)
+
+const ORGANIZATION_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'Store',
+  name: SHOP.name,
+  url: SHOP.url,
+  logo: `${SHOP.url}/logo.webp`,
+  email: SHOP.email,
+  address: { '@type': 'PostalAddress', addressLocality: SHOP.pickupCity, addressCountry: 'FR' },
+}
 
 export function SectionHead({ eyebrow, title, to, dark = false }: { eyebrow: string; title: string; to?: string; dark?: boolean }) {
   return (
@@ -39,6 +51,7 @@ export default function Home() {
     title: 'Poke 30 — Collection Pokémon 30 ans & cartes gradées',
     description: 'Spécialiste français Pokémon : ETB 30e anniversaire, coffrets First Partners et cartes gradées. Produits officiels, livraison suivie depuis la France.',
     image: etb.image,
+    jsonLd: ORGANIZATION_LD,
   })
 
   return (
@@ -47,36 +60,37 @@ export default function Home() {
       <section className="relative overflow-hidden bg-ink-950 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_30%,rgba(255,210,63,.18),transparent_55%),radial-gradient(ellipse_at_10%_90%,rgba(59,130,246,.18),transparent_50%)]" />
         <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(white_1px,transparent_1px),linear-gradient(90deg,white_1px,transparent_1px)] [background-size:48px_48px]" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 lg:grid-cols-[1.1fr_1fr] lg:py-24">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:gap-12 sm:py-16 lg:grid-cols-[1.1fr_1fr] lg:py-24">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-gold-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-gold-300 ring-1 ring-gold-400/30">
               <Sparkles size={14} /> Pokémon · 30e anniversaire
             </span>
-            <h1 className="mt-6 font-display text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+            <h1 className="mt-6 font-display text-[2.75rem] font-extrabold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
               La collection
               <br />
               30 ans est
               <br />
               <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-orange-400 bg-clip-text text-transparent">disponible.</span>
             </h1>
-            <p className="mt-6 max-w-lg text-lg text-white/70">
+            <p className="mt-5 max-w-lg text-white/70 sm:mt-6 sm:text-lg">
               ETB français et coffrets First Partners japonais des 7 générations. Produits officiels, stocks limités, expédiés depuis la France.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/collection-30-ans" className="group inline-flex items-center gap-2 rounded-full bg-gold-400 px-7 py-4 font-bold text-ink-900 shadow-lg shadow-gold-400/20 transition hover:bg-gold-300">
-                Découvrir la collection <ArrowRight size={18} className="transition group-hover:translate-x-1" />
+            <div className="mt-7 flex gap-3 sm:mt-8">
+              <Link to="/collection-30-ans" className="group inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gold-400 px-5 py-3.5 text-sm font-bold sm:flex-none sm:px-7 sm:py-4 sm:text-base text-ink-900 shadow-lg shadow-gold-400/20 transition hover:bg-gold-300">
+                <span className="sm:hidden">La collection</span>
+                <span className="hidden sm:inline">Découvrir la collection</span> <ArrowRight size={18} className="transition group-hover:translate-x-1" />
               </Link>
-              <Link to={`/produit/${etb.slug}`} className="inline-flex items-center gap-2 rounded-full px-7 py-4 font-bold ring-1 ring-white/20 transition hover:bg-white/5">
+              <Link to={`/produit/${etb.slug}`} className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold ring-1 sm:px-7 sm:py-4 sm:text-base ring-white/20 transition hover:bg-white/5">
                 Voir l’ETB
               </Link>
             </div>
           </div>
 
-          <div className="relative mx-auto h-[380px] w-full max-w-md sm:h-[460px]">
+          <div className="relative mx-auto h-[290px] w-full max-w-md sm:h-[460px]">
             <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-400/25 blur-3xl" />
             <Link
               to={`/produit/${etb.slug}`}
-              className="floaty absolute left-1/2 top-4 z-20 w-60 -translate-x-1/2 rounded-3xl bg-white p-4 shadow-2xl ring-1 ring-white/20 sm:w-72"
+              className="floaty absolute left-1/2 top-2 z-20 w-48 -translate-x-1/2 rounded-3xl bg-white p-4 shadow-2xl ring-1 ring-white/20 sm:w-72"
             >
               <img src={etb.image} alt={etb.name} fetchPriority="high" width={288} height={288} className="aspect-square w-full object-contain" />
               <span className="absolute -right-3 -top-3 rounded-full bg-gold-400 px-3 py-1.5 text-xs font-bold text-ink-900 shadow-lg">Édition 30e anniversaire</span>
@@ -86,9 +100,9 @@ export default function Home() {
                 key={g}
                 to={`/produit/coffret-first-partners-${g}g-30th-celebration-jp`}
                 style={{ ['--r' as string]: i ? '8deg' : '-8deg', animationDelay: `${i + 1}s` }}
-                className={`floaty absolute bottom-0 z-10 w-40 rounded-2xl bg-white p-2.5 shadow-2xl sm:w-48 ${i ? 'right-0' : 'left-0'}`}
+                className={`floaty absolute bottom-0 z-10 w-32 rounded-2xl bg-white p-2.5 shadow-2xl sm:w-48 ${i ? 'right-0' : 'left-0'}`}
               >
-                <img src={`${import.meta.env.BASE_URL}products/first-partners-${g}g.webp`} alt={`Coffret First Partners ${g}G`} className="aspect-square w-full object-contain" />
+                <img src={`${import.meta.env.BASE_URL}products/first-partners-${g}g.webp`} alt={`Coffret First Partners ${g}G`} width={192} height={192} className="aspect-square w-full object-contain" />
               </Link>
             ))}
           </div>
@@ -118,25 +132,48 @@ export default function Home() {
 
       {/* UNIVERS */}
       <section className="mx-auto max-w-7xl px-4 py-20">
-        <SectionHead eyebrow="Catalogue" title="Explorer par univers" />
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-          {UNIVERSES.filter((x) => PRODUCTS.some((p) => p.universe === x.id)).map((u) => (
-            <Link
-              key={u.id}
-              to={`/boutique/${u.id}`}
-              className="group relative flex aspect-[3/4] flex-col justify-end overflow-hidden rounded-2xl p-4 text-white shadow-lg transition hover:-translate-y-1 hover:shadow-2xl"
-              style={{ background: `radial-gradient(circle at 80% 10%, ${u.from}, transparent 60%), linear-gradient(160deg, ${u.to}, #060919)` }}
-            >
-              <span className="absolute right-3 top-3 font-display text-5xl font-extrabold text-white/10 transition group-hover:scale-110">
-                {PRODUCTS.filter((p) => p.universe === u.id).length}
-              </span>
-              <p className="font-display text-xl font-bold leading-tight">{u.label}</p>
-              <p className="mt-1 text-xs text-white/70">{u.tagline}</p>
-              <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-gold-300">
-                Explorer <ArrowRight size={14} className="transition group-hover:translate-x-1" />
-              </span>
-            </Link>
-          ))}
+        <SectionHead eyebrow="Catalogue" title="Explorer par univers" to="/boutique" />
+        <div className="grid gap-4 md:grid-cols-2">
+          {universes.map((u) => {
+            const shots = u.products.filter((p) => p.image).slice(0, 3)
+            return (
+              <Link
+                key={u.id}
+                to={`/boutique/${u.id}`}
+                className="group relative flex min-h-56 overflow-hidden rounded-3xl p-6 text-white shadow-lg transition hover:-translate-y-1 hover:shadow-2xl sm:p-8"
+                style={{ background: `radial-gradient(circle at 85% 15%, ${u.from}, transparent 60%), linear-gradient(160deg, ${u.to}, #060919)` }}
+              >
+                <div className="relative z-10 flex max-w-[55%] flex-col justify-end">
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">
+                    {u.products.length} produit{u.products.length > 1 ? 's' : ''}
+                  </p>
+                  <p className="mt-1 font-display text-3xl font-extrabold leading-tight">{u.label}</p>
+                  <p className="mt-1 text-sm text-white/70">{u.tagline}</p>
+                  <span className="mt-4 inline-flex w-fit items-center gap-1 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur transition group-hover:bg-white/25">
+                    Explorer <ArrowRight size={16} className="transition group-hover:translate-x-1" />
+                  </span>
+                </div>
+                {shots.length > 0 ? (
+                  <div className="absolute -right-4 bottom-6 top-6 flex w-[45%] items-center">
+                    {shots.map((p, i) => (
+                      <img
+                        key={p.slug}
+                        src={p.image}
+                        alt=""
+                        loading="lazy"
+                        className="absolute aspect-square w-[72%] rounded-2xl bg-white object-contain p-2 shadow-2xl transition duration-500 group-hover:scale-105"
+                        style={{ right: `${i * 14}%`, transform: `rotate(${(i - 1) * 7}deg)`, zIndex: 3 - i }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <span className="absolute -bottom-6 right-4 font-display text-[9rem] font-extrabold leading-none text-white/10 transition group-hover:scale-110">
+                    {u.products.length}
+                  </span>
+                )}
+              </Link>
+            )
+          })}
         </div>
       </section>
 
@@ -153,7 +190,7 @@ export default function Home() {
 
       {/* GRADÉES */}
       <section className="mx-auto max-w-7xl px-4 pb-20">
-        <div className="grid gap-8 rounded-3xl bg-white p-6 ring-1 ring-ink-900/5 md:p-10 lg:grid-cols-[1fr_2fr]">
+        <div className={`grid items-center gap-8 rounded-3xl bg-white p-6 ring-1 ring-ink-900/5 md:p-10 ${graded.length > 1 ? 'lg:grid-cols-[1fr_2fr]' : 'md:grid-cols-[1.4fr_1fr]'}`}>
           <div className="flex flex-col justify-center">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-500">Cartes gradées</p>
             <h2 className="mt-2 font-display text-4xl font-bold tracking-tight">Slabs PSA, CGC et PCA</h2>
@@ -162,7 +199,7 @@ export default function Home() {
               Voir les gradées <ArrowRight size={16} />
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <div className={`grid gap-4 ${graded.length > 1 ? 'grid-cols-2 sm:grid-cols-3' : 'mx-auto w-full max-w-xs'}`}>
             {graded.map((p) => (
               <ProductCard key={p.slug} product={p} />
             ))}

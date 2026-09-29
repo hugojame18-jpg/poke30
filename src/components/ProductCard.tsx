@@ -7,7 +7,7 @@ import { useState, type MouseEvent } from 'react'
 export function ProductVisual({ product, className = '' }: { product: Product; className?: string }) {
   const u = universeOf(product.universe)
   if (product.image) {
-    return <img src={product.image} alt={product.name} loading="lazy" className={`h-full w-full object-contain ${className}`} />
+    return <img src={product.image} alt={product.name} loading="lazy" decoding="async" width={400} height={400} className={`h-full w-full object-contain ${className}`} />
   }
   // Visuel de remplacement tant qu'il n'y a pas de photo produit
   return (
@@ -39,9 +39,10 @@ export function StockPill({ stock }: { stock: number }) {
 }
 
 export default function ProductCard({ product, dark = false }: { product: Product; dark?: boolean }) {
-  const { add, qtyOf } = useCart()
+  const { add, qtyOf, setOpen } = useCart()
   const [added, setAdded] = useState(false)
-  const full = product.stock <= qtyOf(product.slug)
+  const inCart = qtyOf(product.slug) > 0
+  const soldOut = product.stock <= 0
 
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect()
@@ -80,15 +81,16 @@ export default function ProductCard({ product, dark = false }: { product: Produc
           <span className="font-display text-xl font-bold">{euro(product.price)}</span>
           <button
             onClick={() => {
+              if (inCart) return setOpen(true)
               add(product.slug)
               setAdded(true)
               setTimeout(() => setAdded(false), 1800)
             }}
-            disabled={full}
-            aria-label={`Ajouter ${product.name} au panier`}
+            disabled={soldOut}
+            aria-label={inCart ? `${product.name} est dans votre panier` : `Ajouter ${product.name} au panier`}
             className="inline-flex items-center gap-1.5 rounded-full bg-gold-400 px-3.5 py-2 text-xs font-bold text-ink-900 transition hover:bg-gold-300 active:scale-95 disabled:opacity-40"
           >
-            {added ? <Check size={14} /> : <ShoppingBag size={14} />} {added ? 'Ajouté' : product.stock <= 0 ? 'Épuisé' : full ? 'Max.' : 'Ajouter'}
+            {added || inCart ? <Check size={14} /> : <ShoppingBag size={14} />} {added ? 'Ajouté' : soldOut ? 'Épuisé' : inCart ? 'Au panier' : 'Ajouter'}
           </button>
         </div>
       </div>

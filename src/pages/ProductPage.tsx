@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { Bell, Check, ChevronDown, PackageCheck, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ArrowRight, Bell, Check, ChevronDown, PackageCheck, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
 import { PRODUCTS, euro, getProduct, universeOf, type Product } from '../lib/data'
 import { useCart } from '../lib/cart'
 import { SHOP } from '../lib/config'
@@ -52,6 +52,7 @@ export default function ProductPage() {
   const { slug = '' } = useParams()
   const product = getProduct(slug)
   const { add, qtyOf } = useCart()
+  const navigate = useNavigate()
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null)
   const [justAdded, setJustAdded] = useState(false)
   const [showSticky, setShowSticky] = useState(false)
@@ -67,6 +68,7 @@ export default function ProductPage() {
         description: product.description,
         image: product.image ? SHOP.url + product.image : undefined,
         sku: product.slug,
+        brand: { '@type': 'Brand', name: 'Pokémon' },
         category: universeOf(product.universe).label,
         offers: {
           '@type': 'Offer',
@@ -103,7 +105,6 @@ export default function ProductPage() {
   if (!product) return <NotFound />
   const u = universeOf(product.universe)
   const inCart = qtyOf(slug)
-  const max = inCart > 0 ? 0 : Math.min(1, product.stock)
   const related = PRODUCTS.filter((p) => p.universe === product.universe && p.slug !== slug).slice(0, 4)
 
   const buy = () => {
@@ -112,6 +113,9 @@ export default function ProductPage() {
     setTimeout(() => setJustAdded(false), 2000)
   }
   const soldOut = product.stock <= 0
+  const freeShipping = product.price >= SHOP.freeShippingFrom
+  // Un seul article par commande : une fois dans le panier, on propose directement de finaliser
+  const goCheckout = () => navigate('/commande')
 
   return (
     <>
@@ -182,11 +186,17 @@ export default function ProductPage() {
                 <NotifyMe product={product} />
               ) : (
                 <>
-                  <div className="flex gap-3">
+                  {inCart > 0 && !justAdded ? (
+                    <button
+                      onClick={goCheckout}
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-900 px-6 py-4 font-bold text-white shadow-lg shadow-ink-900/20 transition hover:bg-ink-700 active:scale-[.98]"
+                    >
+                      Finaliser ma commande · {euro(product.price)} <ArrowRight size={18} className="transition group-hover:translate-x-1" />
+                    </button>
+                  ) : (
                     <button
                       onClick={buy}
-                      disabled={max <= 0}
-                      className={`inline-flex flex-1 items-center justify-center gap-2 rounded-full px-6 py-4 font-bold shadow-lg transition active:scale-[.98] disabled:opacity-40 disabled:shadow-none ${
+                      className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 font-bold shadow-lg transition active:scale-[.98] ${
                         justAdded ? 'bg-emerald-500 text-white shadow-emerald-500/25' : 'bg-gold-400 text-ink-900 shadow-gold-400/30 hover:bg-gold-300'
                       }`}
                     >
@@ -196,14 +206,19 @@ export default function ProductPage() {
                         </>
                       ) : (
                         <>
-                          <ShoppingBag size={18} /> {max <= 0 ? 'Stock max. dans le panier' : `Ajouter au panier · ${euro(product.price)}`}
+                          <ShoppingBag size={18} /> Ajouter au panier · {euro(product.price)}
                         </>
                       )}
                     </button>
-                  </div>
+                  )}
                   {inCart > 0 && (
                     <p className="flex items-center gap-1.5 text-sm text-emerald-600">
-                      <Check size={16} /> {inCart} déjà dans votre panier
+                      <Check size={16} /> Dans votre panier
+                    </p>
+                  )}
+                  {freeShipping && (
+                    <p className="flex items-center gap-2 text-sm font-semibold text-emerald-700">
+                      <Truck size={18} className="shrink-0" /> Livraison suivie offerte
                     </p>
                   )}
                   <DeliveryEstimate />
@@ -226,7 +241,8 @@ export default function ProductPage() {
               </Accordion>
               <Accordion title="Livraison & retrait" icon={Truck}>
                 <p>
-                  Préparation sous {SHOP.prepDays * 24} h ouvrées, envoi en livraison suivie depuis la France ({euro(SHOP.shippingPrice)}, offerte dès {euro(SHOP.freeShippingFrom)}).
+                  Préparation sous {SHOP.prepDays * 24} h ouvrées, envoi en livraison suivie depuis la France (
+                  {freeShipping ? 'offerte pour ce produit' : `${euro(SHOP.shippingPrice)}, offerte dès ${euro(SHOP.freeShippingFrom)}`}).
                 </p>
                 <p className="mt-2">Retrait gratuit à {SHOP.pickupCity} sur rendez-vous.</p>
               </Accordion>
@@ -279,13 +295,18 @@ export default function ProductPage() {
               <p className="hidden truncate text-sm font-semibold sm:block">{product.name}</p>
               <p className="font-display text-lg font-bold">{euro(product.price)}</p>
             </div>
-            <button
-              onClick={buy}
-              disabled={max <= 0}
-              className={`rounded-full px-6 py-3 font-bold transition disabled:opacity-40 ${justAdded ? 'bg-emerald-500 text-white' : 'bg-gold-400 text-ink-900 hover:bg-gold-300'}`}
-            >
-              {justAdded ? 'Ajouté ✓' : 'Ajouter au panier'}
-            </button>
+            {inCart > 0 && !justAdded ? (
+              <button onClick={goCheckout} className="rounded-full bg-ink-900 px-6 py-3 font-bold text-white transition hover:bg-ink-700">
+                Finaliser ma commande
+              </button>
+            ) : (
+              <button
+                onClick={buy}
+                className={`rounded-full px-6 py-3 font-bold transition ${justAdded ? 'bg-emerald-500 text-white' : 'bg-gold-400 text-ink-900 hover:bg-gold-300'}`}
+              >
+                {justAdded ? 'Ajouté ✓' : 'Ajouter au panier'}
+              </button>
+            )}
           </div>
         </div>
       )}
