@@ -6,7 +6,7 @@ import { SHOP } from '../lib/config'
 import { euro } from '../lib/data'
 import { useSeo } from '../lib/seo'
 import { ProductVisual } from '../components/ProductCard'
-import { DeliveryEstimate, PaymentBadges } from '../components/Trust'
+import { DeliveryEstimate, OneItemNotice, PaymentBadges } from '../components/Trust'
 
 const COUNTRIES = [
   { code: 'FR', name: 'France', dial: '+33' },
@@ -169,6 +169,9 @@ export default function Checkout() {
 
         <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-900">
           <DeliveryEstimate compact />
+        </div>
+        <div className="rounded-2xl bg-gold-400/15 p-3 text-ink-900">
+          <OneItemNotice compact />
         </div>
 
         <button

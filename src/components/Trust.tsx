@@ -1,4 +1,4 @@
-import { Lock, PackageCheck, RotateCcw, ShieldCheck, Truck } from 'lucide-react'
+import { Lock, PackageCheck, RotateCcw, ShieldCheck, Truck, UserCheck } from 'lucide-react'
 import { SHOP } from '../lib/config'
 import { deliveryDate } from '../lib/delivery'
 
@@ -15,6 +15,19 @@ export function PaymentBadges({ dark = false, className = '' }: { dark?: boolean
         </span>
       ))}
     </div>
+  )
+}
+
+/** Limite anti-revente : le panier n'accepte qu'un article (voir `add` dans lib/cart.tsx). */
+export function OneItemNotice({ compact = false, inCart = false }: { compact?: boolean; inCart?: boolean }) {
+  return (
+    <p className={`flex items-start gap-2 ${compact ? 'text-xs' : 'text-sm'}`}>
+      <UserCheck size={compact ? 14 : 18} className="mt-0.5 shrink-0 text-gold-500" />
+      <span>
+        <strong>1 article par commande</strong>, pour éviter l’achat-revente et laisser sa chance à chaque collectionneur.
+        {inCart && ' Ajouter un autre produit remplace celui de votre panier.'}
+      </span>
+    </p>
   )
 }
 

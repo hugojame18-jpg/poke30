@@ -8,7 +8,7 @@ import { track } from '../lib/analytics'
 import { useSeo } from '../lib/seo'
 import { pushRecent, useRecent } from '../lib/recent'
 import ProductCard, { ProductVisual, StockPill } from '../components/ProductCard'
-import { DeliveryEstimate, PaymentBadges } from '../components/Trust'
+import { DeliveryEstimate, OneItemNotice, PaymentBadges } from '../components/Trust'
 import NotFound from './NotFound'
 
 function Accordion({ title, icon: Icon, children, defaultOpen = false }: { title: string; icon: typeof Truck; children: React.ReactNode; defaultOpen?: boolean }) {
@@ -221,6 +221,7 @@ export default function ProductPage() {
                     <Truck size={18} className="shrink-0" /> Livraison suivie offerte
                   </p>
                   <DeliveryEstimate />
+                  <OneItemNotice />
                   <PaymentBadges />
                 </>
               )}

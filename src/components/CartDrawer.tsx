@@ -5,7 +5,7 @@ import { useCart } from '../lib/cart'
 import { euro } from '../lib/data'
 import { track } from '../lib/analytics'
 import { ProductVisual } from './ProductCard'
-import { DeliveryEstimate, PaymentBadges } from './Trust'
+import { DeliveryEstimate, OneItemNotice, PaymentBadges } from './Trust'
 
 export default function CartDrawer() {
   const { open, setOpen, lines, subtotal, discount, shipping, total, remove, count } = useCart()
@@ -81,6 +81,9 @@ export default function CartDrawer() {
               </ul>
               <div className="mx-5 mb-4 rounded-2xl bg-emerald-50 p-3 text-emerald-900">
                 <DeliveryEstimate compact />
+              </div>
+              <div className="mx-5 mb-4 rounded-2xl bg-gold-400/15 p-3 text-ink-900">
+                <OneItemNotice compact inCart />
               </div>
             </div>
 
