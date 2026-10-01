@@ -11,9 +11,7 @@ function addBusinessDays(d: Date, n: number) {
 
 const fmt = (d: Date) => d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
 
-/** Fourchette de livraison estimée à partir d'aujourd'hui. */
-export function deliveryWindow(now = new Date()) {
-  const min = addBusinessDays(now, 1 + SHOP.transitDays)
-  const max = addBusinessDays(now, SHOP.prepDays + SHOP.transitDays)
-  return { min: fmt(min), max: fmt(max) }
+/** Date de livraison estimée pour une commande passée aujourd'hui (« jeudi 8 octobre »). */
+export function deliveryDate(now = new Date()) {
+  return fmt(addBusinessDays(now, SHOP.deliveryDays))
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { deliveryWindow } from '../lib/delivery'
+import { deliveryDate } from '../lib/delivery'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, ChevronDown, Clock, Mail, MapPin, PackageSearch, Truck } from 'lucide-react'
 import { ARTICLES, FAQ, universeOf } from '../lib/data'
@@ -116,11 +116,11 @@ export function FaqPage() {
 
 export function Account() {
   useSeo({ title: 'Suivre ma commande', description: 'Suivi de commande, délais de livraison et contact Poke 30.' })
-  const { min, max } = deliveryWindow()
+  const date = deliveryDate()
   const steps = [
-    { icon: PackageSearch, title: 'Préparation', text: `Votre commande est vérifiée et emballée sous ${SHOP.prepDays * 24} h ouvrées.` },
+    { icon: PackageSearch, title: 'Préparation', text: 'Votre commande est vérifiée et emballée avec soin dès sa réception.' },
     { icon: Truck, title: 'Expédition suivie', text: 'Le numéro de suivi vous est envoyé par e-mail dès le départ du colis.' },
-    { icon: Clock, title: 'Livraison', text: `Pour une commande passée aujourd’hui : entre ${min} et ${max}.` },
+    { icon: Clock, title: 'Livraison', text: `En ${SHOP.deliveryDays} jours ouvrés : pour une commande passée aujourd’hui, livraison le ${date}.` },
   ]
   return (
     <>

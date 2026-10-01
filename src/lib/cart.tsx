@@ -84,7 +84,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const value = useMemo<CartCtx>(() => {
     const pct = promo ? SHOP.promoCodes[promo] ?? 0 : 0
     const discount = Math.round(subtotal * pct) / 100
-    const shipping = subtotal === 0 || subtotal - discount >= SHOP.freeShippingFrom ? 0 : SHOP.shippingPrice
+    const shipping = 0 // livraison toujours offerte
     return {
       lines,
       count: lines.reduce((s, l) => s + l.qty, 0),

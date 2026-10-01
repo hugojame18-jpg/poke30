@@ -3,10 +3,8 @@ export const SHOP = {
   name: 'Poke 30',
   url: 'https://poke30.site',
   email: 'contact@poke30.site',
-  freeShippingFrom: 19.99, // € — livraison offerte à partir de ce montant
-  shippingPrice: 5.9, // € — Colissimo suivi
-  prepDays: 2, // jours ouvrés de préparation max
-  transitDays: 2, // jours ouvrés de transport estimés
+  // Livraison suivie toujours offerte : le client paie exactement le montant du lien de paiement
+  deliveryDays: 3, // délai de livraison annoncé, en jours ouvrés (préparation + transport)
   returnDays: 14, // droit de rétractation légal (produits scellés)
   pickupCity: 'Émerainville',
   payments: ['CB', 'Visa', 'Mastercard', 'PayPal', 'Apple Pay'],

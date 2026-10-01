@@ -193,7 +193,7 @@ export const ARTICLES: Article[] = [
 ]
 
 export const FAQ: { q: string; a: string }[] = [
-  { q: 'Quand ma commande est-elle préparée et expédiée ?', a: 'Les commandes sont préparées sous 24 à 48 h ouvrées, puis expédiées en suivi depuis la France. Vous recevez le numéro de suivi par e-mail dès l’envoi.' },
+  { q: 'Quand vais-je recevoir ma commande ?', a: `Les commandes sont livrées en ${SHOP.deliveryDays} jours ouvrés, en suivi depuis la France. Vous recevez le numéro de suivi par e-mail dès l’envoi.` },
   { q: 'Puis-je modifier ou annuler ma commande ?', a: 'Oui, tant qu’elle n’a pas été expédiée. Contactez-nous au plus vite avec votre numéro de commande.' },
   { q: 'Puis-je retirer ma commande à Émerainville ?', a: 'Oui, le retrait est possible sur rendez-vous. Choisissez « Retrait » lors de la commande et nous vous contactons pour fixer un créneau.' },
   { q: 'Les produits sont-ils officiels ?', a: 'Tous nos produits sont officiels et scellés d’usine.' },

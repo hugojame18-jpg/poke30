@@ -92,7 +92,6 @@ export default function ProductPage() {
   const soldOut = product.stock <= 0
   const orderable = canOrder(product)
   const upcoming = isUpcoming(product)
-  const freeShipping = product.price >= SHOP.freeShippingFrom
   // Un seul article par commande : une fois dans le panier, on propose directement de finaliser
   const goCheckout = () => navigate('/commande')
 
@@ -164,11 +163,6 @@ export default function ProductPage() {
                 <StockPill stock={product.stock} />
               ) : null}
             </div>
-            {product.price < SHOP.freeShippingFrom && !soldOut && (
-              <p className="mt-2 text-sm text-slate-500">
-                Livraison offerte dès {euro(SHOP.freeShippingFrom)} d’achat
-              </p>
-            )}
 
             <div ref={buyRef} className="mt-7 space-y-4 rounded-3xl bg-white p-5 ring-1 ring-ink-900/5">
               {!orderable ? (
@@ -223,11 +217,9 @@ export default function ProductPage() {
                       <Check size={16} /> Dans votre panier
                     </p>
                   )}
-                  {freeShipping && (
-                    <p className="flex items-center gap-2 text-sm font-semibold text-emerald-700">
-                      <Truck size={18} className="shrink-0" /> Livraison suivie offerte
-                    </p>
-                  )}
+                  <p className="flex items-center gap-2 text-sm font-semibold text-emerald-700">
+                    <Truck size={18} className="shrink-0" /> Livraison suivie offerte
+                  </p>
                   <DeliveryEstimate />
                   <PaymentBadges />
                 </>
@@ -248,8 +240,7 @@ export default function ProductPage() {
               </Accordion>
               <Accordion title="Livraison & retrait" icon={Truck}>
                 <p>
-                  Préparation sous {SHOP.prepDays * 24} h ouvrées, envoi en livraison suivie depuis la France (
-                  {freeShipping ? 'offerte pour ce produit' : `${euro(SHOP.shippingPrice)}, offerte dès ${euro(SHOP.freeShippingFrom)}`}).
+                  Livraison suivie offerte en {SHOP.deliveryDays} jours ouvrés, expédiée depuis la France.
                 </p>
                 <p className="mt-2">Retrait gratuit à {SHOP.pickupCity} sur rendez-vous.</p>
               </Accordion>

@@ -1,7 +1,6 @@
 import { Lock, PackageCheck, RotateCcw, ShieldCheck, Truck } from 'lucide-react'
 import { SHOP } from '../lib/config'
-import { euro } from '../lib/data'
-import { deliveryWindow } from '../lib/delivery'
+import { deliveryDate } from '../lib/delivery'
 
 export function PaymentBadges({ dark = false, className = '' }: { dark?: boolean; className?: string }) {
   return (
@@ -20,12 +19,12 @@ export function PaymentBadges({ dark = false, className = '' }: { dark?: boolean
 }
 
 export function DeliveryEstimate({ compact = false }: { compact?: boolean }) {
-  const { min, max } = deliveryWindow()
+  const date = deliveryDate()
   return (
     <p className={`flex items-start gap-2 ${compact ? 'text-xs' : 'text-sm'}`}>
       <Truck size={compact ? 14 : 18} className="mt-0.5 shrink-0 text-emerald-600" />
       <span>
-        Commandez aujourd’hui, livraison estimée entre <strong>{min}</strong> et <strong>{max}</strong>
+        Livraison en {SHOP.deliveryDays} jours ouvrés : commandez aujourd’hui, reçu le <strong>{date}</strong>
       </span>
     </p>
   )
@@ -34,6 +33,6 @@ export function DeliveryEstimate({ compact = false }: { compact?: boolean }) {
 export const GUARANTEES = [
   { icon: PackageCheck, title: '100 % officiel & scellé', text: 'Aucun produit reconditionné ni ouvert. Jamais.' },
   { icon: ShieldCheck, title: 'Emballage collectionneur', text: 'Coffrets et boîtes calés en carton renforcé.' },
-  { icon: Truck, title: 'Livraison suivie', text: `Offerte dès ${euro(SHOP.freeShippingFrom)}, suivi envoyé par e-mail.` },
+  { icon: Truck, title: 'Livraison suivie', text: `Offerte sur toutes les commandes, livrée en ${SHOP.deliveryDays} jours ouvrés.` },
   { icon: RotateCcw, title: `${SHOP.returnDays} jours pour changer d’avis`, text: 'Sur les produits non ouverts, remboursement rapide.' },
 ]

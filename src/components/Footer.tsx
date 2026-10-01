@@ -2,15 +2,14 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Clock, MapPin, PackageCheck, ShieldCheck, Truck } from 'lucide-react'
 import { SHOP } from '../lib/config'
-import { euro } from '../lib/data'
 import { track } from '../lib/analytics'
 import { PaymentBadges } from './Trust'
 
 const PERKS = [
   { icon: ShieldCheck, title: 'Paiement sécurisé', text: SHOP.payments.slice(0, 3).join(', ') },
   { icon: PackageCheck, title: '100 % officiel', text: 'Produits scellés d’usine' },
-  { icon: Truck, title: 'Livraison suivie', text: `Offerte dès ${euro(SHOP.freeShippingFrom)}` },
-  { icon: Clock, title: `Expédié sous ${SHOP.prepDays * 24} h`, text: 'Jours ouvrés' },
+  { icon: Truck, title: 'Livraison suivie', text: 'Offerte, sans minimum' },
+  { icon: Clock, title: `Livré en ${SHOP.deliveryDays} jours`, text: 'Jours ouvrés' },
 ]
 
 export function Perks({ dark = false }: { dark?: boolean }) {
@@ -103,7 +102,7 @@ export default function Footer() {
               <MapPin size={16} className="mt-0.5 shrink-0 text-gold-400" /> Émerainville, sur rendez-vous
             </p>
             <p className="mt-2 flex gap-2 text-sm text-white/80">
-              <Clock size={16} className="mt-0.5 shrink-0 text-gold-400" /> Préparation sous 24 à 48 h ouvrées
+              <Clock size={16} className="mt-0.5 shrink-0 text-gold-400" /> Livraison en {SHOP.deliveryDays} jours ouvrés
             </p>
           </div>
         </div>

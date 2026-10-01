@@ -20,7 +20,7 @@ const ANNOUNCES = [
   'Collection Pokémon 30 ans disponible',
   'Produits 100 % officiels',
   'Livraison suivie depuis la France',
-  `Livraison offerte dès ${euro(SHOP.freeShippingFrom)}`,
+  `Livraison suivie offerte en ${SHOP.deliveryDays} jours`,
   `Retrait gratuit à ${SHOP.pickupCity}`,
 ]
 
