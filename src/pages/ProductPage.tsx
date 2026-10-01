@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowRight, CalendarClock, Check, ChevronDown, PackageCheck, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
-import { PRODUCTS, canOrder, euro, getProduct, isUpcoming, releaseDate, universeOf } from '../lib/data'
+import { PRODUCTS, canOrder, euro, getProduct, isUpcoming, releaseLabel, universeOf } from '../lib/data'
 import { useCart } from '../lib/cart'
 import { SHOP } from '../lib/config'
 import { track } from '../lib/analytics'
@@ -158,7 +158,7 @@ export default function ProductPage() {
               <span className="font-display text-4xl font-extrabold">{euro(product.price)}</span>
               {upcoming ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/10 px-3 py-1 text-sm font-bold text-sky-600">
-                  <CalendarClock size={16} /> Sortie le {releaseDate(product)}
+                  <CalendarClock size={16} /> Sortie {releaseLabel(product)}
                 </span>
               ) : orderable ? (
                 <StockPill stock={product.stock} />
@@ -176,7 +176,7 @@ export default function ProductPage() {
                   <p className="font-semibold">Bientôt disponible sur Poke 30</p>
                   <p className="text-sm text-slate-600">
                     {upcoming
-                      ? `Ce produit sort le ${releaseDate(product)} : la commande ouvrira sur cette page le jour de sa sortie.`
+                      ? `Ce produit sort ${releaseLabel(product)} : la commande ouvrira sur cette page le jour de sa sortie.`
                       : 'Les commandes de ce produit ouvrent très prochainement sur cette page.'}
                   </p>
                   <Link to="/collection-30-ans" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-900 px-6 py-4 font-bold text-white transition hover:bg-ink-700">
@@ -254,7 +254,7 @@ export default function ProductPage() {
                 <p className="mt-2">Retrait gratuit à {SHOP.pickupCity} sur rendez-vous.</p>
               </Accordion>
               <Accordion title="Authenticité & emballage" icon={ShieldCheck}>
-                <p>Tous nos produits sont officiels et scellés d’usine. Les coffrets sont calés en carton renforcé, les cartes seules envoyées sous sleeve + toploader.</p>
+                <p>Tous nos produits sont officiels et scellés d’usine. Les coffrets et boîtes sont calés en carton renforcé.</p>
               </Accordion>
               <Accordion title="Retours" icon={RotateCcw}>
                 <p>Vous disposez de {SHOP.returnDays} jours pour nous retourner un produit non ouvert, dans son état d’origine.</p>

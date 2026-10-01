@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CalendarClock, Check, ShoppingBag } from 'lucide-react'
-import { canOrder, euro, isUpcoming, releaseDate, universeOf, type Product } from '../lib/data'
+import { canOrder, euro, isUpcoming, releaseLabel, universeOf, type Product } from '../lib/data'
 import { useCart } from '../lib/cart'
 import { useState, type MouseEvent } from 'react'
 
@@ -83,7 +83,7 @@ export default function ProductCard({ product, dark = false }: { product: Produc
         </Link>
         {isUpcoming(product) ? (
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-500">
-            <CalendarClock size={14} /> Sortie le {releaseDate(product)}
+            <CalendarClock size={14} /> Sortie {releaseLabel(product)}
           </span>
         ) : orderable ? (
           <StockPill stock={product.stock} />

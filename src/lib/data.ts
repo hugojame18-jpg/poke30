@@ -1,6 +1,6 @@
 import { SHOP } from './config'
 
-export type Universe = 'pokemon' | 'gradees'
+export type Universe = 'pokemon'
 export type Lang = 'FR' | 'JPN' | 'EN'
 
 export interface Product {
@@ -19,13 +19,15 @@ export interface Product {
   details: [string, string][]
   addedAt: string
   sales: number
-  /** Date de sortie (AAAA-MM-JJ) : le produit devient commandable automatiquement ce jour-là */
+  /**
+   * Date de sortie. AAAA-MM-JJ : le produit devient commandable automatiquement ce jour-là.
+   * AAAA-MM (mois seulement) : affiché « Sortie en <mois> », reste non commandable jusqu'à ce qu'une date précise soit renseignée.
+   */
   release?: string
 }
 
 export const UNIVERSES: { id: Universe; label: string; tagline: string; from: string; to: string }[] = [
   { id: 'pokemon', label: 'Pokémon', tagline: 'ETB, displays, coffrets', from: '#facc15', to: '#f97316' },
-  { id: 'gradees', label: 'Cartes gradées', tagline: 'PSA, CGC, PCA', from: '#38bdf8', to: '#1e3a8a' },
 ]
 
 const fp = (g: number): Product => ({
@@ -98,6 +100,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: 'collection-classeur-30th-celebration',
+    // Sortie décalée en décembre : renseigner le jour exact (AAAA-MM-JJ) dès qu'il est connu
     name: 'Collection Classeur — 30th Celebration',
     short: 'Un classeur 9 pochettes aux couleurs des 30 ans et 5 boosters 30th Celebration.',
     price: 79.99,
@@ -114,9 +117,9 @@ export const PRODUCTS: Product[] = [
       ['Extension', '30th Celebration'],
       ['État', 'Neuf, scellé d’usine'],
     ],
-    addedAt: '2026-10-02',
+    addedAt: '2026-10-01',
     sales: 0,
-    release: '2026-10-02',
+    release: '2026-12',
   },
   {
     slug: 'mini-tin-30th-celebration',
@@ -140,27 +143,22 @@ export const PRODUCTS: Product[] = [
     sales: 0,
     release: '2026-10-02',
   },
-  {
-    slug: 'charmeleon-169-165-sv2a-cgc-8-5',
-    name: 'Reptincel 169/165 – Pokémon Card 151 – CGC 8.5',
-    short: 'Art rare Card 151 japonais, gradé CGC 8.5 Near Mint+.',
-    price: 79.99,
-    universe: 'gradees',
-    lang: 'JPN',
-    stock: 2,
-    tags: ['CGC'],
-    description: 'Charmeleon (Reptincel) 169/165 de l’extension japonaise Pokémon Card 151 (SV2a), gradé CGC 8.5 Near Mint+. Slab protégé et expédié en colis renforcé.',
-    details: [['Langue', 'Japonais'], ['Extension', 'Pokémon Card 151 (SV2a)'], ['Gradation', 'CGC 8.5 NM+']],
-    addedAt: '2026-08-15',
-    sales: 12,
-  },
 ]
 
 export const getProduct = (slug: string) => PRODUCTS.find((p) => p.slug === slug)
+const hasDay = (release: string) => /^\d{4}-\d{2}-\d{2}$/.test(release)
+/** « vendredi 2 octobre » ou, pour une sortie au mois près, « décembre » */
 export const releaseDate = (p: Product) =>
-  p.release ? new Date(`${p.release}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''
-/** Pas encore sorti (heure locale du visiteur) */
-export const isUpcoming = (p: Product) => !!p.release && Date.now() < new Date(`${p.release}T00:00:00`).getTime()
+  !p.release
+    ? ''
+    : hasDay(p.release)
+      ? new Date(`${p.release}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+      : new Date(`${p.release}-15T12:00:00`).toLocaleDateString('fr-FR', { month: 'long' })
+/** « le vendredi 2 octobre » / « en décembre » */
+export const releaseLabel = (p: Product) => (p.release && hasDay(p.release) ? `le ${releaseDate(p)}` : `en ${releaseDate(p)}`)
+/** Pas encore sorti (heure locale du visiteur). Une sortie au mois près reste « à venir » tant que le jour n'est pas fixé. */
+export const isUpcoming = (p: Product) =>
+  !!p.release && (!hasDay(p.release) || Date.now() < new Date(`${p.release}T00:00:00`).getTime())
 /** Commandable : sorti et payable avec un lien de paiement à son prix exact */
 export const canOrder = (p: Product) => !isUpcoming(p) && !!SHOP.checkoutUrls[Math.round(p.price * 100)]
 export const universeOf = (id: Universe) => UNIVERSES.find((u) => u.id === id)!
@@ -195,6 +193,6 @@ export const FAQ: { q: string; a: string }[] = [
   { q: 'Quand ma commande est-elle préparée et expédiée ?', a: 'Les commandes sont préparées sous 24 à 48 h ouvrées, puis expédiées en suivi depuis la France. Vous recevez le numéro de suivi par e-mail dès l’envoi.' },
   { q: 'Puis-je modifier ou annuler ma commande ?', a: 'Oui, tant qu’elle n’a pas été expédiée. Contactez-nous au plus vite avec votre numéro de commande.' },
   { q: 'Puis-je retirer ma commande à Émerainville ?', a: 'Oui, le retrait est possible sur rendez-vous. Choisissez « Retrait » lors de la commande et nous vous contactons pour fixer un créneau.' },
-  { q: 'Les produits sont-ils officiels ?', a: 'Tous nos produits sont officiels et scellés d’usine. Les cartes gradées sont vendues dans leur slab d’origine.' },
-  { q: 'Comment sont protégés les colis ?', a: 'Coffrets en carton renforcé avec calage, cartes seules sous sleeve + toploader, slabs sous papier bulle.' },
+  { q: 'Les produits sont-ils officiels ?', a: 'Tous nos produits sont officiels et scellés d’usine.' },
+  { q: 'Comment sont protégés les colis ?', a: 'Coffrets et boîtes calés en carton renforcé, pour qu’ils arrivent comme neufs.' },
 ]

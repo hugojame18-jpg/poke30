@@ -79,14 +79,13 @@ export default function Footer() {
                 Poke <span className="text-gold-400">30</span>
               </span>
             </Link>
-            <p className="mt-4 text-sm text-white/60">Spécialiste français Pokémon : collection 30 ans et cartes gradées, expédiées depuis la France.</p>
+            <p className="mt-4 text-sm text-white/60">Spécialiste français Pokémon : collection 30 ans et nouveautés 30th Celebration, expédiées depuis la France.</p>
           </div>
           <div>
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/40">Boutique</h4>
             <ul className="mt-4 space-y-2 text-sm text-white/80">
               <li><Link className="hover:text-gold-400" to="/collection-30-ans">Collection 30 ans</Link></li>
               <li><Link className="hover:text-gold-400" to="/boutique/pokemon">Pokémon</Link></li>
-              <li><Link className="hover:text-gold-400" to="/boutique/gradees">Cartes gradées</Link></li>
             </ul>
           </div>
           <div>

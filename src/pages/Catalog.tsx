@@ -47,7 +47,7 @@ export default function Catalog({ collection30 = false }: { collection30?: boole
   }, [collection30, u, q, langs, stockOnly, sort])
 
   const seoTitle = collection30 ? 'Collection Pokémon 30 ans — ETB & First Partners' : u ? `${u.label} — produits officiels` : 'Boutique Pokémon'
-  useSeo({ title: seoTitle, description: collection30 ? 'ETB français et coffrets First Partners japonais du 30e anniversaire Pokémon. Stocks limités, expédition depuis la France.' : `${u?.tagline ?? 'Pokémon et cartes gradées'} : produits officiels expédiés depuis la France.` })
+  useSeo({ title: seoTitle, description: collection30 ? 'ETB français et coffrets First Partners japonais du 30e anniversaire Pokémon. Stocks limités, expédition depuis la France.' : `${u?.tagline ?? 'Produits Pokémon'} : produits officiels expédiés depuis la France.` })
   const listKey = list.map((p) => p.slug).join()
   useEffect(() => {
     track.viewList(seoTitle, list)
@@ -96,7 +96,7 @@ export default function Catalog({ collection30 = false }: { collection30?: boole
       </section>
 
       <div className="mx-auto max-w-7xl px-4 py-8">
-        {!collection30 && (
+        {!collection30 && UNIVERSES.filter((x) => PRODUCTS.some((p) => p.universe === x.id)).length > 1 && (
           <div className="-mx-4 mb-6 flex gap-2 overflow-x-auto px-4 pb-1">
             <Link to="/boutique" className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ring-1 ${!u ? 'bg-ink-900 text-white ring-ink-900' : 'bg-white ring-ink-900/10 hover:ring-ink-900/30'}`}>
               Tout

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarClock, ChevronDown, Flame, Sparkles } from 'lucide-react'
 import { useState } from 'react'
-import { ARTICLES, FAQ, PRODUCTS, UNIVERSES, euro, isUpcoming, releaseDate, universeOf } from '../lib/data'
+import { ARTICLES, FAQ, PRODUCTS, euro, isUpcoming, releaseDate, releaseLabel, universeOf } from '../lib/data'
 import { SHOP } from '../lib/config'
 import ProductCard from '../components/ProductCard'
 import { Perks } from '../components/Footer'
@@ -12,11 +12,12 @@ import { useRecent } from '../lib/recent'
 // Produits épuisés en fin de liste
 const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans') && !p.release).sort((a, b) => Number(a.stock <= 0) - Number(b.stock <= 0))
 const releases = PRODUCTS.filter((p) => p.release)
+// Prochaine sortie à date fixe (les sorties « au mois près », comme le classeur en décembre, ne comptent pas)
+const nextDated = () => releases.find((p) => p.release!.length === 10 && isUpcoming(p))
+const datedNames = releases.filter((p) => p.release!.length === 10).map((p) => p.name.replace(' — 30th Celebration', ''))
 // Disposition du visuel d'accueil : le Booster Bundle au centre, le classeur à gauche, le Mini Tin à droite
 const heroBundle = releases.find((p) => p.slug.startsWith('booster-bundle')) ?? releases[0]
 const heroSides = releases.filter((p) => p !== heroBundle).slice(0, 2)
-const graded = PRODUCTS.filter((p) => p.universe === 'gradees')
-const universes = UNIVERSES.map((u) => ({ ...u, products: PRODUCTS.filter((p) => p.universe === u.id) })).filter((u) => u.products.length)
 
 const ORGANIZATION_LD = {
   '@context': 'https://schema.org',
@@ -51,10 +52,11 @@ export function dateFr(d: string) {
 export default function Home() {
   const [faq, setFaq] = useState<number | null>(0)
   const recent = useRecent()
-  const soon = releases.some(isUpcoming)
+  const next = nextDated()
+  const soon = !!next
   useSeo({
-    title: 'Poke 30 — Collection Pokémon 30 ans & cartes gradées',
-    description: 'Spécialiste français Pokémon : ETB 30e anniversaire, coffrets First Partners et cartes gradées. Produits officiels, livraison suivie depuis la France.',
+    title: 'Poke 30 — Collection Pokémon 30 ans & 30th Celebration',
+    description: 'Spécialiste français Pokémon : nouveautés 30th Celebration, coffrets First Partners et collection 30 ans. Produits officiels, livraison suivie depuis la France.',
     image: heroBundle?.image,
     jsonLd: ORGANIZATION_LD,
   })
@@ -68,7 +70,7 @@ export default function Home() {
         <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:gap-12 sm:py-16 lg:grid-cols-[1.1fr_1fr] lg:py-24">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-sky-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-sky-300 ring-1 ring-sky-400/30">
-              <Sparkles size={14} /> {soon ? `Sortie le ${releaseDate(releases[0])}` : 'Nouveautés · 30th Celebration'}
+              <Sparkles size={14} /> {next ? `Sortie le ${releaseDate(next)}` : 'Nouveautés · 30th Celebration'}
             </span>
             <h1 className="mt-6 font-display text-[2.75rem] font-extrabold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
               30th Celebration :
@@ -81,7 +83,10 @@ export default function Home() {
               {releases.map((p) => (
                 <li key={p.slug}>
                   <Link to={`/produit/${p.slug}`} className="group flex max-w-md items-center justify-between gap-4 border-b border-white/10 pb-2 hover:border-gold-400/60">
-                    <span className="font-semibold text-white/85 group-hover:text-white">{p.name.replace(' — 30th Celebration', '')}</span>
+                    <span className="font-semibold text-white/85 group-hover:text-white">
+                      {p.name.replace(' — 30th Celebration', '')}
+                      {p.release!.length < 10 && <span className="ml-2 rounded-full bg-white/10 px-2 py-0.5 align-middle text-xs font-bold text-sky-300">{releaseDate(p)}</span>}
+                    </span>
                     <span className="font-display font-extrabold text-gold-300">{euro(p.price)}</span>
                   </Link>
                 </li>
@@ -138,12 +143,17 @@ export default function Home() {
                   <CalendarClock size={14} /> {soon ? 'Bientôt disponible' : 'Nouveautés'}
                 </p>
                 <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
-                  {soon ? `Sortie le ${releaseDate(releases[0])}` : 'Les nouveautés 30th Celebration sont là'}
+                  {next ? `Sortie le ${releaseDate(next)}` : 'Les nouveautés 30th Celebration sont là'}
                 </h2>
                 <p className="mt-3 max-w-md text-white/80">
                   {soon
                     ? 'Les nouveautés 30th Celebration arrivent chez Poke 30. Les commandes ouvriront sur le site le jour de leur sortie.'
-                    : 'Booster Bundle, Mini Tins et Collection Classeur : les sorties du 2 octobre, expédiées depuis la France.'}
+                    : `${datedNames.join(', ')} : commandez maintenant, expédié depuis la France.`}
+                  {releases.filter((p) => p.release!.length < 10).map((p) => (
+                    <span key={p.slug} className="mt-2 block font-semibold text-white">
+                      {p.name.replace(' — 30th Celebration', '')} : sortie décalée {releaseLabel(p)}.
+                    </span>
+                  ))}
                 </p>
               </div>
               <div className={`-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:items-stretch sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 ${releases.length > 2 ? 'sm:grid-cols-3' : releases.length > 1 ? 'sm:grid-cols-2' : 'sm:max-w-xs'}`}>
@@ -176,53 +186,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* UNIVERS */}
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <SectionHead eyebrow="Catalogue" title="Explorer par univers" to="/boutique" />
-        <div className="grid gap-4 md:grid-cols-2">
-          {universes.map((u) => {
-            const shots = u.products.filter((p) => p.image).slice(0, 3)
-            return (
-              <Link
-                key={u.id}
-                to={`/boutique/${u.id}`}
-                className="group relative flex min-h-56 overflow-hidden rounded-3xl p-6 text-white shadow-lg transition hover:-translate-y-1 hover:shadow-2xl sm:p-8"
-                style={{ background: `radial-gradient(circle at 85% 15%, ${u.from}, transparent 60%), linear-gradient(160deg, ${u.to}, #060919)` }}
-              >
-                <div className="relative z-10 flex max-w-[55%] flex-col justify-end">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">
-                    {u.products.length} produit{u.products.length > 1 ? 's' : ''}
-                  </p>
-                  <p className="mt-1 font-display text-3xl font-extrabold leading-tight">{u.label}</p>
-                  <p className="mt-1 text-sm text-white/70">{u.tagline}</p>
-                  <span className="mt-4 inline-flex w-fit items-center gap-1 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur transition group-hover:bg-white/25">
-                    Explorer <ArrowRight size={16} className="transition group-hover:translate-x-1" />
-                  </span>
-                </div>
-                {shots.length > 0 ? (
-                  <div className="absolute -right-4 bottom-6 top-6 flex w-[45%] items-center">
-                    {shots.map((p, i) => (
-                      <img
-                        key={p.slug}
-                        src={p.image}
-                        alt=""
-                        loading="lazy"
-                        className="absolute aspect-square w-[72%] rounded-2xl bg-white object-contain p-2 shadow-2xl transition duration-500 group-hover:scale-105"
-                        style={{ right: `${i * 14}%`, transform: `rotate(${(i - 1) * 7}deg)`, zIndex: 3 - i }}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <span className="absolute -bottom-6 right-4 font-display text-[9rem] font-extrabold leading-none text-white/10 transition group-hover:scale-110">
-                    {u.products.length}
-                  </span>
-                )}
-              </Link>
-            )
-          })}
-        </div>
-      </section>
-
       {recent.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 pb-20">
           <SectionHead eyebrow="Reprendre où vous en étiez" title="Récemment consultés" />
@@ -233,25 +196,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
-      {/* GRADÉES */}
-      <section className="mx-auto max-w-7xl px-4 pb-20">
-        <div className={`grid items-center gap-8 rounded-3xl bg-white p-6 ring-1 ring-ink-900/5 md:p-10 ${graded.length > 1 ? 'lg:grid-cols-[1fr_2fr]' : 'md:grid-cols-[1.4fr_1fr]'}`}>
-          <div className="flex flex-col justify-center">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-500">Cartes gradées</p>
-            <h2 className="mt-2 font-display text-4xl font-bold tracking-tight">Slabs PSA, CGC et PCA</h2>
-            <p className="mt-4 text-slate-600">Des cartes authentifiées et notées, expédiées protégées en colis renforcé. Pièces uniques : premier arrivé, premier servi.</p>
-            <Link to="/boutique/gradees" className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-ink-900 px-6 py-3 text-sm font-bold text-white hover:bg-ink-700">
-              Voir les gradées <ArrowRight size={16} />
-            </Link>
-          </div>
-          <div className={`grid gap-4 ${graded.length > 1 ? 'grid-cols-2 sm:grid-cols-3' : 'mx-auto w-full max-w-xs'}`}>
-            {graded.map((p) => (
-              <ProductCard key={p.slug} product={p} />
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* GARANTIES */}
       <section className="mx-auto max-w-7xl px-4 pb-20">

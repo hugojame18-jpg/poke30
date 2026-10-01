@@ -12,12 +12,11 @@ const NAV = [
   { to: '/boutique?tri=ventes', label: 'Meilleures ventes' },
   { to: '/collection-30-ans', label: 'Collection 30 ans', hot: true },
   { to: '/boutique/pokemon', label: 'Pokémon' },
-  { to: '/boutique/gradees', label: 'Cartes gradées' },
   { to: '/blog', label: 'Blog' },
 ]
 
 const ANNOUNCES = [
-  '30th Celebration : Booster Bundle, Mini Tins et Collection Classeur le 2 octobre',
+  '30th Celebration : Booster Bundle et Mini Tins le 2 octobre',
   'Collection Pokémon 30 ans disponible',
   'Produits 100 % officiels',
   'Livraison suivie depuis la France',
@@ -60,7 +59,7 @@ function SearchBox({ onDone }: { onDone?: () => void }) {
         onChange={(e) => setQ(e.target.value)}
         onFocus={() => setFocus(true)}
         onBlur={() => setTimeout(() => setFocus(false), 150)}
-        placeholder="Rechercher un coffret, une carte gradée…"
+        placeholder="Rechercher un coffret, un booster…"
         aria-label="Rechercher un produit"
         className="h-11 w-full rounded-full border border-ink-900/10 bg-white pl-11 pr-4 text-sm outline-none transition focus:border-gold-500 focus:ring-4 focus:ring-gold-400/25"
       />

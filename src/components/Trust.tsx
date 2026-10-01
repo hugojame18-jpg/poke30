@@ -33,7 +33,7 @@ export function DeliveryEstimate({ compact = false }: { compact?: boolean }) {
 
 export const GUARANTEES = [
   { icon: PackageCheck, title: '100 % officiel & scellé', text: 'Aucun produit reconditionné ni ouvert. Jamais.' },
-  { icon: ShieldCheck, title: 'Emballage collectionneur', text: 'Coffrets calés en carton renforcé, cartes sous toploader.' },
+  { icon: ShieldCheck, title: 'Emballage collectionneur', text: 'Coffrets et boîtes calés en carton renforcé.' },
   { icon: Truck, title: 'Livraison suivie', text: `Offerte dès ${euro(SHOP.freeShippingFrom)}, suivi envoyé par e-mail.` },
   { icon: RotateCcw, title: `${SHOP.returnDays} jours pour changer d’avis`, text: 'Sur les produits non ouverts, remboursement rapide.' },
 ]
