@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { Menu, Search, ShoppingBag, User, X } from 'lucide-react'
+import { Lock, Menu, Search, ShoppingBag, User, X } from 'lucide-react'
 import { PRODUCTS, euro } from '../lib/data'
 import { useCart } from '../lib/cart'
 import { SHOP } from '../lib/config'
@@ -8,21 +8,18 @@ import { track } from '../lib/analytics'
 import { ProductVisual } from './ProductCard'
 
 const NAV = [
-  { to: '/boutique?tri=nouveautes', label: 'Nouveautés' },
-  { to: '/boutique?tri=ventes', label: 'Meilleures ventes' },
-  { to: '/collection-30-ans', label: 'Collection 30 ans', hot: true },
-  { to: '/boutique/pokemon', label: 'Pokémon' },
-  { to: '/blog', label: 'Blog' },
+  { to: '/boutique?tri=nouveautes', label: 'Nouveautés', hot: true },
+  { to: '/collection-30-ans', label: 'Collection 30 ans' },
+  { to: '/boutique', label: 'Toute la boutique' },
+  { to: '/faq', label: 'Aide & FAQ' },
+  { to: '/compte', label: 'Suivre ma commande' },
 ]
 
 const ANNOUNCES = [
-  'Nouveau : Booster Bundle et Mini Tins 30th Celebration disponibles',
-  '1 article par commande, contre l’achat-revente',
-  'Collection Pokémon 30 ans disponible',
-  'Produits 100 % officiels',
-  'Livraison suivie depuis la France',
+  'Nouveau : Booster Bundle et Mini Tins 30th Celebration',
   `Livraison suivie offerte en ${SHOP.deliveryDays} jours`,
-  `Retrait gratuit à ${SHOP.pickupCity}`,
+  'Produits 100 % officiels et scellés',
+  '1 article par commande, contre l’achat-revente',
 ]
 
 const norm = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
@@ -125,6 +122,24 @@ export default function Header() {
     prevCount.current = count
   }, [count])
 
+  // Page de commande sans distraction : logo et mention de sécurité seulement
+  if (location.pathname === '/commande')
+    return (
+      <header className="border-b border-ink-900/8 bg-cream">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+          <Link to="/" className="flex items-center gap-2">
+            <img src={`${import.meta.env.BASE_URL}logo.webp`} alt="" className="h-9 w-9 object-contain" />
+            <span className="font-display text-xl font-extrabold tracking-tight">
+              Poke <span className="text-gold-500">30</span>
+            </span>
+          </Link>
+          <p className="flex items-center gap-1.5 text-sm font-semibold text-emerald-700">
+            <Lock size={14} /> Commande sécurisée
+          </p>
+        </div>
+      </header>
+    )
+
   return (
     <>
       <p className="sr-only">{ANNOUNCES.join(' · ')}</p>
@@ -170,9 +185,6 @@ export default function Header() {
             </button>
           </div>
         </div>
-        <div className="px-4 pb-3 md:hidden">
-          <SearchBox />
-        </div>
         <nav className="hidden border-t border-ink-900/5 lg:block">
           <ul className="mx-auto flex max-w-7xl items-center justify-center gap-1 px-4">
             {NAV.map((n) => (
@@ -180,7 +192,7 @@ export default function Header() {
                 <NavLink
                   to={n.to}
                   className={({ isActive }) =>
-                    `relative block px-3 py-3 text-[13px] font-semibold transition hover:text-gold-500 ${isActive && !n.to.includes('?') ? 'text-gold-500' : ''}`
+                    `relative block px-3 py-3 text-[13px] font-semibold transition hover:text-gold-500 ${isActive && !n.to.includes('?') && n.to !== '/boutique' ? 'text-gold-500' : ''}`
                   }
                 >
                   {n.label}
@@ -196,11 +208,14 @@ export default function Header() {
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
           <div className="fade-in absolute inset-0 bg-ink-950/60" onClick={() => setMobile(false)} />
           <aside className="slide-in-left absolute inset-y-0 left-0 flex w-80 max-w-[85vw] flex-col bg-cream p-5 shadow-2xl">
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-4 flex items-center justify-between">
               <span className="font-display text-xl font-extrabold">Menu</span>
               <button onClick={() => setMobile(false)} className="rounded-full p-2 hover:bg-ink-900/5" aria-label="Fermer">
                 <X size={20} />
               </button>
+            </div>
+            <div className="mb-4">
+              <SearchBox onDone={() => setMobile(false)} />
             </div>
             <ul className="space-y-1">
               {NAV.map((n) => (
@@ -211,16 +226,6 @@ export default function Header() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link to="/faq" className="block rounded-xl px-3 py-3 font-semibold hover:bg-white">
-                  Aide & FAQ
-                </Link>
-              </li>
-              <li>
-                <Link to="/compte" className="block rounded-xl px-3 py-3 font-semibold hover:bg-white">
-                  Suivre ma commande
-                </Link>
-              </li>
             </ul>
             <p className="mt-auto rounded-2xl bg-white p-4 text-sm text-slate-600">
               Une question ? <a href={`mailto:${SHOP.email}`} className="font-semibold text-ink-900 underline">{SHOP.email}</a>

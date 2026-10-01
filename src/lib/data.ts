@@ -196,7 +196,7 @@ export const FAQ: { q: string; a: string }[] = [
   { q: 'Quand vais-je recevoir ma commande ?', a: `Les commandes sont livrées en ${SHOP.deliveryDays} jours, en suivi depuis la France. Vous recevez le numéro de suivi par e-mail dès l’envoi.` },
   { q: 'Pourquoi un seul article par commande ?', a: 'Pour éviter l’achat-revente : chaque commande est limitée à un article, afin que les nouveautés profitent au plus grand nombre de collectionneurs.' },
   { q: 'Puis-je modifier ou annuler ma commande ?', a: 'Oui, tant qu’elle n’a pas été expédiée. Contactez-nous au plus vite avec votre numéro de commande.' },
-  { q: 'Puis-je retirer ma commande à Émerainville ?', a: 'Oui, le retrait est possible sur rendez-vous. Choisissez « Retrait » lors de la commande et nous vous contactons pour fixer un créneau.' },
+  { q: 'Puis-je retirer ma commande à Émerainville ?', a: 'Oui, le retrait est possible sur rendez-vous : après votre commande, écrivez-nous pour convenir d’un créneau.' },
   { q: 'Les produits sont-ils officiels ?', a: 'Tous nos produits sont officiels et scellés d’usine.' },
   { q: 'Comment sont protégés les colis ?', a: 'Coffrets et boîtes calés en carton renforcé, pour qu’ils arrivent comme neufs.' },
 ]

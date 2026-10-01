@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { canOrder, getProduct, type Product } from './data'
 import { SHOP } from './config'
 import { track } from './analytics'
@@ -17,6 +18,8 @@ type CartCtx = {
   open: boolean
   setOpen: (v: boolean) => void
   add: (slug: string) => void
+  /** Achat direct : remplace le panier par ce produit sans ouvrir le panier. Renvoie false si non commandable. */
+  buyNow: (slug: string) => boolean
   setQty: (slug: string, qty: number) => void
   remove: (slug: string) => void
   clear: () => void
@@ -81,6 +84,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setOpenState(true)
   }, [])
 
+  const buyNow = useCallback((slug: string) => {
+    const p = getProduct(slug)
+    if (!p || !canOrder(p) || p.stock <= 0) return false
+    track.addToCart(p, 1)
+    track.beginCheckout([{ product: p, qty: 1 }], p.price)
+    setRaw([{ slug, qty: 1 }])
+    setOpenState(false)
+    return true
+  }, [])
+
   const value = useMemo<CartCtx>(() => {
     const pct = promo ? SHOP.promoCodes[promo] ?? 0 : 0
     const discount = Math.round(subtotal * pct) / 100
@@ -103,6 +116,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       open,
       setOpen,
       add,
+      buyNow,
       setQty: (slug, qty) => {
         const cur = raw.find((l) => l.slug === slug)
         const p = getProduct(slug)
@@ -118,9 +132,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
       clear: () => setRaw([]),
       qtyOf: (slug) => raw.find((l) => l.slug === slug)?.qty ?? 0,
     }
-  }, [lines, subtotal, promo, open, setOpen, add, raw])
+  }, [lines, subtotal, promo, open, setOpen, add, buyNow, raw])
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
+}
+
+/** Un seul article par commande : « Commander » mène directement à la page de livraison. */
+export function useBuyNow() {
+  const { buyNow } = useCart()
+  const navigate = useNavigate()
+  return (slug: string) => {
+    if (buyNow(slug)) navigate('/commande')
+  }
 }
 
 export function useCart() {

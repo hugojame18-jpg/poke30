@@ -1,13 +1,29 @@
 import { Link } from 'react-router-dom'
-import { CalendarClock, Check, ShoppingBag } from 'lucide-react'
+import { ArrowRight, CalendarClock } from 'lucide-react'
 import { canOrder, euro, isUpcoming, releaseLabel, universeOf, type Product } from '../lib/data'
-import { useCart } from '../lib/cart'
-import { useState, type MouseEvent } from 'react'
+import { useBuyNow } from '../lib/cart'
+import type { MouseEvent } from 'react'
 
-export function ProductVisual({ product, className = '' }: { product: Product; className?: string }) {
+/** Version 450 px des photos (public/products/sm), servie aux vignettes pour alléger la page */
+const small = (src: string) => src.replace('/products/', '/products/sm/')
+
+export function ProductVisual({ product, className = '', sizes = '(min-width: 1024px) 280px, 45vw', eager = false }: { product: Product; className?: string; sizes?: string; eager?: boolean }) {
   const u = universeOf(product.universe)
   if (product.image) {
-    return <img src={product.image} alt={product.name} loading="lazy" decoding="async" width={400} height={400} className={`h-full w-full object-contain ${className}`} />
+    return (
+      <img
+        src={small(product.image)}
+        srcSet={`${small(product.image)} 450w, ${product.image} 900w`}
+        sizes={sizes}
+        alt={product.name}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchPriority={eager ? 'high' : undefined}
+        decoding="async"
+        width={450}
+        height={450}
+        className={`h-full w-full object-contain ${className}`}
+      />
+    )
   }
   // Visuel de remplacement tant qu'il n'y a pas de photo produit
   return (
@@ -39,9 +55,7 @@ export function StockPill({ stock }: { stock: number }) {
 }
 
 export default function ProductCard({ product, dark = false }: { product: Product; dark?: boolean }) {
-  const { add, qtyOf, setOpen } = useCart()
-  const [added, setAdded] = useState(false)
-  const inCart = qtyOf(product.slug) > 0
+  const buyNow = useBuyNow()
   const soldOut = product.stock <= 0
   const orderable = canOrder(product)
 
@@ -101,17 +115,12 @@ export default function ProductCard({ product, dark = false }: { product: Produc
             </Link>
           ) : (
           <button
-            onClick={() => {
-              if (inCart) return setOpen(true)
-              add(product.slug)
-              setAdded(true)
-              setTimeout(() => setAdded(false), 1800)
-            }}
+            onClick={() => buyNow(product.slug)}
             disabled={soldOut}
-            aria-label={inCart ? `${product.name} est dans votre panier` : `Ajouter ${product.name} au panier`}
-            className="inline-flex items-center gap-1.5 rounded-full bg-gold-400 px-3.5 py-2 text-xs font-bold text-ink-900 transition hover:bg-gold-300 active:scale-95 disabled:opacity-40"
+            aria-label={soldOut ? `${product.name} épuisé` : `Commander ${product.name}`}
+            className="group/btn inline-flex items-center gap-1 rounded-full bg-gold-400 px-3.5 py-2 text-xs font-bold text-ink-900 transition hover:bg-gold-300 active:scale-95 disabled:bg-transparent disabled:text-current disabled:opacity-40 disabled:ring-1 disabled:ring-current"
           >
-            {added || inCart ? <Check size={14} /> : <ShoppingBag size={14} />} {added ? 'Ajouté' : soldOut ? 'Épuisé' : inCart ? 'Au panier' : 'Ajouter'}
+            {soldOut ? 'Épuisé' : 'Commander'} {!soldOut && <ArrowRight size={14} className="transition group-hover/btn:translate-x-0.5" />}
           </button>
           )}
         </div>

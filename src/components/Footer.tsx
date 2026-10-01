@@ -1,8 +1,6 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Clock, MapPin, PackageCheck, ShieldCheck, Truck } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { ArrowRight, Clock, Mail, MapPin, PackageCheck, ShieldCheck, Truck } from 'lucide-react'
 import { SHOP } from '../lib/config'
-import { track } from '../lib/analytics'
 import { PaymentBadges } from './Trust'
 
 const PERKS = [
@@ -31,43 +29,38 @@ export function Perks({ dark = false }: { dark?: boolean }) {
 }
 
 export default function Footer() {
-  const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
+  const { pathname } = useLocation()
+
+  // Page de commande : pied de page minimal, sans liens de sortie
+  if (pathname === '/commande')
+    return (
+      <footer className="mt-16 border-t border-ink-900/10 py-6">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-4 text-xs text-slate-500 sm:flex-row">
+          <p>
+            Une question ? <a href={`mailto:${SHOP.email}`} className="font-semibold text-ink-900 underline">{SHOP.email}</a>
+          </p>
+          <p>© {new Date().getFullYear()} {SHOP.name}</p>
+        </div>
+      </footer>
+    )
 
   return (
     <footer className="mt-24 bg-ink-950 text-white">
       <div className="mx-auto max-w-7xl px-4 py-14">
-        <div className="grid gap-10 rounded-3xl bg-gradient-to-br from-ink-800 to-ink-900 p-8 ring-1 ring-white/10 md:grid-cols-2 md:p-10">
+        <div className="grid items-center gap-6 rounded-3xl bg-gradient-to-br from-ink-800 to-ink-900 p-8 ring-1 ring-white/10 md:grid-cols-[1.4fr_1fr] md:p-10">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-400">Le Club Poke 30</p>
-            <h3 className="mt-2 font-display text-3xl font-bold">Ne ratez plus aucune sortie.</h3>
-            <p className="mt-2 text-white/60">Précommandes, réassorts et avantages membres, directement par e-mail.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-400">Une question avant de commander ?</p>
+            <h3 className="mt-2 font-display text-3xl font-bold">On vous répond par e-mail.</h3>
+            <p className="mt-2 text-white/60">Disponibilité, livraison, suivi de colis : écrivez-nous, ou consultez les réponses aux questions les plus fréquentes.</p>
           </div>
-          {sent ? (
-            <p className="self-center text-lg font-semibold text-gold-300">Merci, vous êtes inscrit·e ✦</p>
-          ) : (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                if (email.includes('@')) {
-                  track.signUp('footer')
-                  setSent(true)
-                }
-              }}
-              className="flex flex-col gap-3 self-center sm:flex-row"
-            >
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="votre@email.fr"
-                aria-label="Adresse e-mail"
-                className="h-12 flex-1 rounded-full bg-white/10 px-5 outline-none ring-1 ring-white/15 placeholder:text-white/40 focus:ring-gold-400"
-              />
-              <button className="h-12 rounded-full bg-gold-400 px-6 font-bold text-ink-900 hover:bg-gold-300">S’inscrire</button>
-            </form>
-          )}
+          <div className="flex flex-col gap-3">
+            <a href={`mailto:${SHOP.email}`} className="flex items-center justify-center gap-2 rounded-full bg-gold-400 px-6 py-3.5 font-bold text-ink-900 hover:bg-gold-300">
+              <Mail size={18} /> {SHOP.email}
+            </a>
+            <Link to="/faq" className="flex items-center justify-center gap-2 rounded-full px-6 py-3.5 font-bold ring-1 ring-white/20 hover:bg-white/5">
+              Questions fréquentes <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
 
         <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
@@ -83,8 +76,9 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/40">Boutique</h4>
             <ul className="mt-4 space-y-2 text-sm text-white/80">
+              <li><Link className="hover:text-gold-400" to="/boutique?tri=nouveautes">Nouveautés</Link></li>
               <li><Link className="hover:text-gold-400" to="/collection-30-ans">Collection 30 ans</Link></li>
-              <li><Link className="hover:text-gold-400" to="/boutique/pokemon">Pokémon</Link></li>
+              <li><Link className="hover:text-gold-400" to="/boutique">Toute la boutique</Link></li>
             </ul>
           </div>
           <div>

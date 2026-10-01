@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowRight, CalendarClock, Check, ChevronDown, PackageCheck, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
+import { Link, useParams } from 'react-router-dom'
+import { ArrowRight, CalendarClock, ChevronDown, Lock, PackageCheck, RotateCcw, ShieldCheck, Truck } from 'lucide-react'
 import { PRODUCTS, canOrder, euro, getProduct, isUpcoming, releaseLabel, universeOf } from '../lib/data'
-import { useCart } from '../lib/cart'
+import { useBuyNow } from '../lib/cart'
 import { SHOP } from '../lib/config'
 import { track } from '../lib/analytics'
 import { useSeo } from '../lib/seo'
 import { pushRecent, useRecent } from '../lib/recent'
 import ProductCard, { ProductVisual, StockPill } from '../components/ProductCard'
-import { DeliveryEstimate, OneItemNotice, PaymentBadges } from '../components/Trust'
+import { OneItemNotice, PaymentBadges } from '../components/Trust'
+import { deliveryDate } from '../lib/delivery'
 import NotFound from './NotFound'
 
 function Accordion({ title, icon: Icon, children, defaultOpen = false }: { title: string; icon: typeof Truck; children: React.ReactNode; defaultOpen?: boolean }) {
@@ -28,10 +29,8 @@ function Accordion({ title, icon: Icon, children, defaultOpen = false }: { title
 export default function ProductPage() {
   const { slug = '' } = useParams()
   const product = getProduct(slug)
-  const { add, qtyOf } = useCart()
-  const navigate = useNavigate()
+  const buyNow = useBuyNow()
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null)
-  const [justAdded, setJustAdded] = useState(false)
   const [showSticky, setShowSticky] = useState(false)
   const buyRef = useRef<HTMLDivElement>(null)
   const recent = useRecent(slug)
@@ -81,29 +80,22 @@ export default function ProductPage() {
 
   if (!product) return <NotFound />
   const u = universeOf(product.universe)
-  const inCart = qtyOf(slug)
-  const related = PRODUCTS.filter((p) => p.universe === product.universe && p.slug !== slug).slice(0, 4)
-
-  const buy = () => {
-    add(product.slug)
-    setJustAdded(true)
-    setTimeout(() => setJustAdded(false), 2000)
-  }
+  // Suggestions : produits commandables d'abord
+  const related = PRODUCTS.filter((p) => p.slug !== slug && canOrder(p) && p.stock > 0).slice(0, 4)
   const soldOut = product.stock <= 0
   const orderable = canOrder(product)
   const upcoming = isUpcoming(product)
-  // Un seul article par commande : une fois dans le panier, on propose directement de finaliser
-  const goCheckout = () => navigate('/commande')
+  const buy = () => buyNow(product.slug)
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 py-8 pb-28 lg:pb-8">
-        <nav className="mb-6 text-xs text-slate-500">
-          <Link to="/" className="hover:text-ink-900">Accueil</Link> / <Link to={`/boutique/${u.id}`} className="hover:text-ink-900">{u.label}</Link> /{' '}
+      <div className="mx-auto max-w-7xl px-4 py-5 pb-28 sm:py-8 lg:pb-8">
+        <nav className="mb-4 text-xs text-slate-500 sm:mb-6">
+          <Link to="/" className="hover:text-ink-900">Accueil</Link> / <Link to="/boutique" className="hover:text-ink-900">Boutique</Link> /{' '}
           <span className="text-ink-900">{product.name}</span>
         </nav>
 
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2 lg:gap-10">
           <div className="lg:sticky lg:top-36 lg:self-start">
             <div
               className="relative aspect-square cursor-zoom-in overflow-hidden rounded-3xl bg-white ring-1 ring-ink-900/5"
@@ -114,7 +106,7 @@ export default function ProductPage() {
               }}
               onMouseLeave={() => setZoom(null)}
             >
-              <div className="h-full w-full p-8 transition-transform duration-200" style={zoom ? { transform: 'scale(1.8)', transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined}>
+              <div className="h-full w-full p-4 transition-transform sm:p-8 duration-200" style={zoom ? { transform: 'scale(1.8)', transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined}>
                 {product.image ? (
                   <img src={product.image} alt={product.name} fetchPriority="high" className="h-full w-full rounded-2xl object-contain" />
                 ) : (
@@ -130,7 +122,7 @@ export default function ProductPage() {
                 <span className="rounded-full bg-ink-900 px-3 py-1.5 text-xs font-bold text-white">{product.lang}</span>
               </div>
             </div>
-            <ul className="mt-4 grid grid-cols-3 gap-3">
+            <ul className="mt-4 hidden grid-cols-3 gap-3 lg:grid">
               {[
                 [PackageCheck, 'Officiel & scellé'],
                 [ShieldCheck, 'Colis protégé'],
@@ -150,10 +142,10 @@ export default function ProductPage() {
             <Link to={`/boutique/${u.id}`} className="text-xs font-bold uppercase tracking-[0.2em] text-gold-500 hover:underline">
               {u.label}
             </Link>
-            <h1 className="mt-2 font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{product.name}</h1>
-            <p className="mt-3 text-lg text-slate-600">{product.short}</p>
+            <h1 className="mt-2 font-display text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">{product.name}</h1>
+            <p className="mt-2 text-slate-600 sm:mt-3 sm:text-lg">{product.short}</p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div className="mt-4 flex sm:mt-6 flex-wrap items-center gap-x-4 gap-y-2">
               <span className="font-display text-4xl font-extrabold">{euro(product.price)}</span>
               {upcoming ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/10 px-3 py-1 text-sm font-bold text-sky-600">
@@ -164,7 +156,7 @@ export default function ProductPage() {
               ) : null}
             </div>
 
-            <div ref={buyRef} className="mt-7 space-y-4 rounded-3xl bg-white p-5 ring-1 ring-ink-900/5">
+            <div ref={buyRef} className="mt-5 space-y-4 rounded-3xl bg-white p-5 ring-1 ring-ink-900/5 sm:mt-7">
               {!orderable ? (
                 <>
                   <p className="font-semibold">Bientôt disponible sur Poke 30</p>
@@ -173,55 +165,45 @@ export default function ProductPage() {
                       ? `Ce produit sort ${releaseLabel(product)} : la commande ouvrira sur cette page le jour de sa sortie.`
                       : 'Les commandes de ce produit ouvrent très prochainement sur cette page.'}
                   </p>
-                  <Link to="/collection-30-ans" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-900 px-6 py-4 font-bold text-white transition hover:bg-ink-700">
-                    Voir la collection 30 ans disponible <ArrowRight size={18} />
+                  <Link to="/boutique" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-900 px-6 py-4 font-bold text-white transition hover:bg-ink-700">
+                    Voir les produits disponibles <ArrowRight size={18} />
                   </Link>
                 </>
               ) : soldOut ? (
                 <>
                   <p className="font-display text-xl font-bold text-red-500">Rupture de stock</p>
                   <p className="text-sm text-slate-600">Ce produit est épuisé pour le moment. Découvrez les nouveautés 30th Celebration.</p>
-                  <Link to="/#nouveautes" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold-400 px-6 py-4 font-bold text-ink-900 transition hover:bg-gold-300">
-                    Voir les nouveautés <ArrowRight size={18} />
+                  <Link to="/boutique" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold-400 px-6 py-4 font-bold text-ink-900 transition hover:bg-gold-300">
+                    Voir les produits disponibles <ArrowRight size={18} />
                   </Link>
                 </>
               ) : (
                 <>
-                  {inCart > 0 && !justAdded ? (
-                    <button
-                      onClick={goCheckout}
-                      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-900 px-6 py-4 font-bold text-white shadow-lg shadow-ink-900/20 transition hover:bg-ink-700 active:scale-[.98]"
-                    >
-                      Finaliser ma commande · {euro(product.price)} <ArrowRight size={18} className="transition group-hover:translate-x-1" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={buy}
-                      className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 font-bold shadow-lg transition active:scale-[.98] ${
-                        justAdded ? 'bg-emerald-500 text-white shadow-emerald-500/25' : 'bg-gold-400 text-ink-900 shadow-gold-400/30 hover:bg-gold-300'
-                      }`}
-                    >
-                      {justAdded ? (
-                        <>
-                          <Check size={18} /> Ajouté !
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingBag size={18} /> Ajouter au panier · {euro(product.price)}
-                        </>
-                      )}
-                    </button>
-                  )}
-                  {inCart > 0 && (
-                    <p className="flex items-center gap-1.5 text-sm text-emerald-600">
-                      <Check size={16} /> Dans votre panier
-                    </p>
-                  )}
-                  <p className="flex items-center gap-2 text-sm font-semibold text-emerald-700">
-                    <Truck size={18} className="shrink-0" /> Livraison suivie offerte
-                  </p>
-                  <DeliveryEstimate />
-                  <OneItemNotice />
+                  <button
+                    onClick={buy}
+                    className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold-400 px-6 py-4 text-lg font-bold text-ink-900 shadow-lg shadow-gold-400/30 transition hover:bg-gold-300 active:scale-[.98]"
+                  >
+                    <Lock size={18} /> Commander · {euro(product.price)} <ArrowRight size={18} className="transition group-hover:translate-x-1" />
+                  </button>
+                  <ul className="space-y-2.5 text-sm">
+                    <li className="flex items-start gap-2.5">
+                      <Truck size={18} className="mt-px shrink-0 text-emerald-600" />
+                      <span>
+                        <strong className="text-emerald-700">Livraison suivie offerte</strong> en {SHOP.deliveryDays} jours : commandez aujourd’hui, reçu le <strong>{deliveryDate()}</strong>
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <PackageCheck size={18} className="mt-px shrink-0 text-gold-500" />
+                      <span>Produit officiel, neuf et scellé d’usine</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <RotateCcw size={18} className="mt-px shrink-0 text-gold-500" />
+                      <span>{SHOP.returnDays} jours pour changer d’avis (produit non ouvert)</span>
+                    </li>
+                  </ul>
+                  <div className="rounded-2xl bg-gold-400/15 p-3">
+                    <OneItemNotice compact />
+                  </div>
                   <PaymentBadges />
                 </>
               )}
@@ -292,20 +274,12 @@ export default function ProductPage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="hidden truncate text-sm font-semibold sm:block">{product.name}</p>
-              <p className="font-display text-lg font-bold">{euro(product.price)}</p>
+              <p className="font-display text-lg font-bold leading-tight">{euro(product.price)}</p>
+              <p className="text-xs font-semibold text-emerald-700">Livraison offerte</p>
             </div>
-            {inCart > 0 && !justAdded ? (
-              <button onClick={goCheckout} className="rounded-full bg-ink-900 px-6 py-3 font-bold text-white transition hover:bg-ink-700">
-                Finaliser ma commande
-              </button>
-            ) : (
-              <button
-                onClick={buy}
-                className={`rounded-full px-6 py-3 font-bold transition ${justAdded ? 'bg-emerald-500 text-white' : 'bg-gold-400 text-ink-900 hover:bg-gold-300'}`}
-              >
-                {justAdded ? 'Ajouté ✓' : 'Ajouter au panier'}
-              </button>
-            )}
+            <button onClick={buy} className="inline-flex items-center gap-1.5 rounded-full bg-gold-400 px-6 py-3 font-bold text-ink-900 transition hover:bg-gold-300">
+              Commander <ArrowRight size={16} />
+            </button>
           </div>
         </div>
       )}
