@@ -95,6 +95,27 @@ export const PRODUCTS: Product[] = [
     upcoming: '2026-10-02',
   },
   {
+    slug: 'collection-classeur-30th-celebration',
+    name: 'Collection Classeur — 30th Celebration',
+    short: 'Un classeur 9 pochettes aux couleurs des 30 ans et 5 boosters 30th Celebration.',
+    price: 0,
+    universe: 'pokemon',
+    lang: 'EN',
+    stock: 0,
+    tags: ['30 ans'],
+    badge: 'Bientôt disponible',
+    description:
+      'La Collection Classeur 30th Celebration réunit un classeur 9 pochettes illustré pour les 30 ans de Pokémon et 5 boosters 30th Celebration pour commencer à le remplir. Produit officiel scellé.',
+    details: [
+      ['Contenu', 'Classeur 9 pochettes, 5 boosters'],
+      ['Extension', '30th Celebration'],
+      ['État', 'Neuf, scellé d’usine'],
+    ],
+    addedAt: '2026-10-02',
+    sales: 0,
+    upcoming: '2026-10-02',
+  },
+  {
     slug: 'display-mini-tins-30th-celebration',
     name: 'Display Mini Tins — 30th Celebration',
     short: 'Le présentoir de mini boîtes métal de la collection 30th Celebration.',

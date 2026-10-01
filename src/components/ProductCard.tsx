@@ -12,12 +12,12 @@ export function ProductVisual({ product, className = '' }: { product: Product; c
   // Visuel de remplacement tant qu'il n'y a pas de photo produit
   return (
     <div
-      className={`grid h-full w-full place-items-center p-6 ${className}`}
+      className={`@container grid h-full w-full place-items-center p-[8%] ${className}`}
       style={{ background: `radial-gradient(circle at 30% 20%, ${u.from}55, transparent 60%), linear-gradient(135deg, ${u.to}, #0b1026)` }}
     >
       <div className="text-center text-white">
-        <div className="font-display text-3xl font-extrabold leading-none drop-shadow">{u.label}</div>
-        <div className="mt-2 text-xs font-medium uppercase tracking-widest text-white/70">Photo à venir</div>
+        <div className="font-display text-[clamp(0.55rem,17cqw,1.875rem)] font-extrabold leading-none drop-shadow">{u.label}</div>
+        <div className="mt-[6cqw] text-[clamp(0.4rem,6cqw,0.75rem)] font-medium uppercase tracking-widest text-white/70">Photo à venir</div>
       </div>
     </div>
   )

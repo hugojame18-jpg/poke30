@@ -3,7 +3,7 @@ import { ArrowRight, CalendarClock, ChevronDown, Flame, Sparkles } from 'lucide-
 import { useState } from 'react'
 import { ARTICLES, FAQ, PRODUCTS, UNIVERSES, releaseDate, universeOf } from '../lib/data'
 import { SHOP } from '../lib/config'
-import ProductCard from '../components/ProductCard'
+import ProductCard, { ProductVisual } from '../components/ProductCard'
 import { Perks } from '../components/Footer'
 import { GUARANTEES } from '../components/Trust'
 import { useSeo } from '../lib/seo'
@@ -148,10 +148,12 @@ export default function Home() {
                   Les nouveautés 30th Celebration arrivent chez Poke 30. Les commandes ouvriront sur le site dès leur sortie.
                 </p>
               </div>
-              <div className={`grid gap-4 ${upcoming.length > 1 ? 'grid-cols-2' : 'max-w-xs'}`}>
+              <div className={`-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 ${upcoming.length > 2 ? 'sm:grid-cols-3' : upcoming.length > 1 ? 'sm:grid-cols-2' : 'sm:max-w-xs'}`}>
                 {upcoming.map((p) => (
-                  <Link key={p.slug} to={`/produit/${p.slug}`} className="group rounded-2xl bg-white p-3 text-ink-900 shadow-2xl transition hover:-translate-y-1">
-                    <img src={p.image} alt={p.name} loading="lazy" width={400} height={400} className="aspect-square w-full rounded-xl object-contain transition duration-500 group-hover:scale-105" />
+                  <Link key={p.slug} to={`/produit/${p.slug}`} className="group w-40 shrink-0 snap-start rounded-2xl bg-white p-3 text-ink-900 shadow-2xl transition hover:-translate-y-1 sm:w-auto">
+                    <div className="aspect-square overflow-hidden rounded-xl">
+                      <ProductVisual product={p} className="transition duration-500 group-hover:scale-105" />
+                    </div>
                     <p className="mt-2 line-clamp-2 px-1 text-sm font-bold leading-snug">{p.name}</p>
                   </Link>
                 ))}
