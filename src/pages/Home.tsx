@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarClock, ChevronDown, Flame, Sparkles } from 'lucide-react'
 import { useState } from 'react'
-import { ARTICLES, FAQ, PRODUCTS, UNIVERSES, releaseDate, universeOf } from '../lib/data'
+import { ARTICLES, FAQ, PRODUCTS, UNIVERSES, euro, isUpcoming, releaseDate, universeOf } from '../lib/data'
 import { SHOP } from '../lib/config'
 import ProductCard, { ProductVisual } from '../components/ProductCard'
 import { Perks } from '../components/Footer'
@@ -9,8 +9,8 @@ import { GUARANTEES } from '../components/Trust'
 import { useSeo } from '../lib/seo'
 import { useRecent } from '../lib/recent'
 
-const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans') && !p.upcoming)
-const upcoming = PRODUCTS.filter((p) => p.upcoming)
+const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans') && !p.release)
+const releases = PRODUCTS.filter((p) => p.release)
 const graded = PRODUCTS.filter((p) => p.universe === 'gradees')
 const universes = UNIVERSES.map((u) => ({ ...u, products: PRODUCTS.filter((p) => p.universe === u.id) })).filter((u) => u.products.length)
 
@@ -48,6 +48,7 @@ export default function Home() {
   const [faq, setFaq] = useState<number | null>(0)
   const etb = PRODUCTS[0]
   const recent = useRecent()
+  const soon = releases.some(isUpcoming)
   useSeo({
     title: 'Poke 30 — Collection Pokémon 30 ans & cartes gradées',
     description: 'Spécialiste français Pokémon : ETB 30e anniversaire, coffrets First Partners et cartes gradées. Produits officiels, livraison suivie depuis la France.',
@@ -132,29 +133,32 @@ export default function Home() {
       </section>
 
       {/* BIENTÔT DISPONIBLE */}
-      {upcoming.length > 0 && (
+      {releases.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 pt-20">
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-indigo-700 p-6 text-white md:p-10">
             <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
             <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_1.4fr]">
               <div>
                 <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em]">
-                  <CalendarClock size={14} /> Bientôt disponible
+                  <CalendarClock size={14} /> {soon ? 'Bientôt disponible' : 'Nouveautés'}
                 </p>
                 <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
-                  Sortie le {releaseDate(upcoming[0])}
+                  {soon ? `Sortie le ${releaseDate(releases[0])}` : 'Les nouveautés 30th Celebration sont là'}
                 </h2>
                 <p className="mt-3 max-w-md text-white/80">
-                  Les nouveautés 30th Celebration arrivent chez Poke 30. Les commandes ouvriront sur le site dès leur sortie.
+                  {soon
+                    ? 'Les nouveautés 30th Celebration arrivent chez Poke 30. Les commandes ouvriront sur le site le jour de leur sortie.'
+                    : 'Booster Bundle, Mini Tins et Collection Classeur : les sorties du 2 octobre, expédiées depuis la France.'}
                 </p>
               </div>
-              <div className={`-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 ${upcoming.length > 2 ? 'sm:grid-cols-3' : upcoming.length > 1 ? 'sm:grid-cols-2' : 'sm:max-w-xs'}`}>
-                {upcoming.map((p) => (
+              <div className={`-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 ${releases.length > 2 ? 'sm:grid-cols-3' : releases.length > 1 ? 'sm:grid-cols-2' : 'sm:max-w-xs'}`}>
+                {releases.map((p) => (
                   <Link key={p.slug} to={`/produit/${p.slug}`} className="group w-40 shrink-0 snap-start rounded-2xl bg-white p-3 text-ink-900 shadow-2xl transition hover:-translate-y-1 sm:w-auto">
                     <div className="aspect-square overflow-hidden rounded-xl">
                       <ProductVisual product={p} className="transition duration-500 group-hover:scale-105" />
                     </div>
                     <p className="mt-2 line-clamp-2 px-1 text-sm font-bold leading-snug">{p.name}</p>
+                    <p className="mt-1 px-1 font-display text-lg font-extrabold">{euro(p.price)}</p>
                   </Link>
                 ))}
               </div>

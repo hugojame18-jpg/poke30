@@ -1,3 +1,5 @@
+import { SHOP } from './config'
+
 export type Universe = 'pokemon' | 'gradees'
 export type Lang = 'FR' | 'JPN' | 'EN'
 
@@ -17,8 +19,8 @@ export interface Product {
   details: [string, string][]
   addedAt: string
   sales: number
-  /** Date de sortie (AAAA-MM-JJ) d'un produit pas encore commandable : ni prix ni bouton panier tant qu'il est renseigné */
-  upcoming?: string
+  /** Date de sortie (AAAA-MM-JJ) : le produit devient commandable automatiquement ce jour-là */
+  release?: string
 }
 
 export const UNIVERSES: { id: Universe; label: string; tagline: string; from: string; to: string }[] = [
@@ -71,18 +73,18 @@ export const PRODUCTS: Product[] = [
     sales: 240,
   },
   ...[1, 2, 3, 4, 5, 6, 7].map(fp),
-  // À paraître : ajouter le prix et le lien de paiement correspondant (config.ts) puis retirer `upcoming` à la sortie
+  // Sorties du 2 octobre : commandables ce jour-là, à condition qu'un lien de paiement existe à leur prix (config.ts)
   {
     slug: 'booster-bundle-30th-celebration',
     name: 'Booster Bundle — 30th Celebration',
     short: 'Le bundle de 6 boosters de la collection 30th Celebration.',
-    price: 0,
+    price: 49.99,
     universe: 'pokemon',
     lang: 'EN',
-    stock: 0,
+    stock: 10,
     image: `${import.meta.env.BASE_URL}products/booster-bundle-30th-celebration.webp`,
     tags: ['30 ans'],
-    badge: 'Bientôt disponible',
+    badge: 'Nouveauté',
     description:
       'Le Booster Bundle de la collection 30th Celebration, avec Pikachu, Mew et Mewtwo en couverture : 6 boosters réunis dans une boîte aux couleurs de l’anniversaire. Produit officiel scellé.',
     details: [
@@ -92,18 +94,18 @@ export const PRODUCTS: Product[] = [
     ],
     addedAt: '2026-10-02',
     sales: 0,
-    upcoming: '2026-10-02',
+    release: '2026-10-02',
   },
   {
     slug: 'collection-classeur-30th-celebration',
     name: 'Collection Classeur — 30th Celebration',
     short: 'Un classeur 9 pochettes aux couleurs des 30 ans et 5 boosters 30th Celebration.',
-    price: 0,
+    price: 79.99,
     universe: 'pokemon',
     lang: 'EN',
-    stock: 0,
+    stock: 6,
     tags: ['30 ans'],
-    badge: 'Bientôt disponible',
+    badge: 'Nouveauté',
     description:
       'La Collection Classeur 30th Celebration réunit un classeur 9 pochettes illustré pour les 30 ans de Pokémon et 5 boosters 30th Celebration pour commencer à le remplir. Produit officiel scellé.',
     details: [
@@ -113,29 +115,29 @@ export const PRODUCTS: Product[] = [
     ],
     addedAt: '2026-10-02',
     sales: 0,
-    upcoming: '2026-10-02',
+    release: '2026-10-02',
   },
   {
-    slug: 'display-mini-tins-30th-celebration',
-    name: 'Display Mini Tins — 30th Celebration',
-    short: 'Le présentoir de mini boîtes métal de la collection 30th Celebration.',
-    price: 0,
+    slug: 'mini-tin-30th-celebration',
+    name: 'Mini Tin — 30th Celebration',
+    short: 'Une mini boîte métal de la collection 30th Celebration, vendue à l’unité.',
+    price: 9.99,
     universe: 'pokemon',
     lang: 'EN',
-    stock: 0,
+    stock: 20,
     image: `${import.meta.env.BASE_URL}products/mini-tins-30th-celebration.webp`,
     tags: ['30 ans'],
-    badge: 'Bientôt disponible',
+    badge: 'Nouveauté',
     description:
-      'Le présentoir complet de mini boîtes métal 30th Celebration, illustrées aux couleurs de l’anniversaire (Miaouss, Électhor, Mentali…). Produit officiel scellé.',
+      'Une mini boîte métal 30th Celebration, illustrée aux couleurs de l’anniversaire. Vendue à l’unité : la photo montre le présentoir de la gamme. Produit officiel scellé.',
     details: [
-      ['Format', 'Présentoir de mini boîtes métal'],
+      ['Format', 'Mini boîte métal, à l’unité'],
       ['Extension', '30th Celebration'],
       ['État', 'Neuf, scellé d’usine'],
     ],
     addedAt: '2026-10-02',
     sales: 0,
-    upcoming: '2026-10-02',
+    release: '2026-10-02',
   },
   {
     slug: 'charmeleon-169-165-sv2a-cgc-8-5',
@@ -155,7 +157,11 @@ export const PRODUCTS: Product[] = [
 
 export const getProduct = (slug: string) => PRODUCTS.find((p) => p.slug === slug)
 export const releaseDate = (p: Product) =>
-  p.upcoming ? new Date(`${p.upcoming}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''
+  p.release ? new Date(`${p.release}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''
+/** Pas encore sorti (heure locale du visiteur) */
+export const isUpcoming = (p: Product) => !!p.release && Date.now() < new Date(`${p.release}T00:00:00`).getTime()
+/** Commandable : sorti et payable avec un lien de paiement à son prix exact */
+export const canOrder = (p: Product) => !isUpcoming(p) && !!SHOP.checkoutUrls[Math.round(p.price * 100)]
 export const universeOf = (id: Universe) => UNIVERSES.find((u) => u.id === id)!
 
 export const euro = (n: number) => n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })

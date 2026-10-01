@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowRight, Bell, CalendarClock, Check, ChevronDown, PackageCheck, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
-import { PRODUCTS, euro, getProduct, releaseDate, universeOf, type Product } from '../lib/data'
+import { PRODUCTS, canOrder, euro, getProduct, isUpcoming, releaseDate, universeOf, type Product } from '../lib/data'
 import { useCart } from '../lib/cart'
 import { SHOP } from '../lib/config'
 import { track } from '../lib/analytics'
@@ -70,11 +70,11 @@ export default function ProductPage() {
         sku: product.slug,
         brand: { '@type': 'Brand', name: 'Pokémon' },
         category: universeOf(product.universe).label,
-        offers: product.upcoming ? undefined : {
+        offers: {
           '@type': 'Offer',
           price: product.price.toFixed(2),
           priceCurrency: 'EUR',
-          availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+          availability: !canOrder(product) ? 'https://schema.org/PreOrder' : product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
           itemCondition: 'https://schema.org/NewCondition',
           url: `${SHOP.url}/produit/${product.slug}`,
         },
@@ -82,7 +82,7 @@ export default function ProductPage() {
     [product],
   )
   useSeo({
-    title: product ? (product.upcoming ? `${product.name} — sortie le ${releaseDate(product)}` : `${product.name} — ${euro(product.price)}`) : 'Produit introuvable',
+    title: product ? `${product.name} — ${euro(product.price)}` : 'Produit introuvable',
     description: product ? `${product.short} Produit officiel, expédié depuis la France en livraison suivie.` : '',
     image: product?.image,
     jsonLd: jsonLd || undefined,
@@ -113,6 +113,8 @@ export default function ProductPage() {
     setTimeout(() => setJustAdded(false), 2000)
   }
   const soldOut = product.stock <= 0
+  const orderable = canOrder(product)
+  const upcoming = isUpcoming(product)
   const freeShipping = product.price >= SHOP.freeShippingFrom
   // Un seul article par commande : une fois dans le panier, on propose directement de finaliser
   const goCheckout = () => navigate('/commande')
@@ -145,7 +147,9 @@ export default function ProductPage() {
               </div>
               <div className="absolute left-5 top-5 flex gap-2">
                 {product.badge && (
-                  <span className={`rounded-full px-3 py-1.5 text-xs font-bold uppercase ${product.upcoming ? 'bg-sky-500 text-white' : 'bg-gold-400 text-ink-900'}`}>{product.badge}</span>
+                  <span className={`rounded-full px-3 py-1.5 text-xs font-bold uppercase ${orderable ? 'bg-gold-400 text-ink-900' : 'bg-sky-500 text-white'}`}>
+                    {orderable ? product.badge : 'Bientôt disponible'}
+                  </span>
                 )}
                 <span className="rounded-full bg-ink-900 px-3 py-1.5 text-xs font-bold text-white">{product.lang}</span>
               </div>
@@ -173,16 +177,16 @@ export default function ProductPage() {
             <h1 className="mt-2 font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{product.name}</h1>
             <p className="mt-3 text-lg text-slate-600">{product.short}</p>
 
-            {product.upcoming ? (
-              <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-sky-500/10 px-4 py-2 font-display text-lg font-bold text-sky-600">
-                <CalendarClock size={20} /> Sortie le {releaseDate(product)}
-              </p>
-            ) : (
-              <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
-                <span className="font-display text-4xl font-extrabold">{euro(product.price)}</span>
+            <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+              <span className="font-display text-4xl font-extrabold">{euro(product.price)}</span>
+              {upcoming ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/10 px-3 py-1 text-sm font-bold text-sky-600">
+                  <CalendarClock size={16} /> Sortie le {releaseDate(product)}
+                </span>
+              ) : orderable ? (
                 <StockPill stock={product.stock} />
-              </div>
-            )}
+              ) : null}
+            </div>
             {product.price < SHOP.freeShippingFrom && !soldOut && (
               <p className="mt-2 text-sm text-slate-500">
                 Livraison offerte dès {euro(SHOP.freeShippingFrom)} d’achat
@@ -190,11 +194,13 @@ export default function ProductPage() {
             )}
 
             <div ref={buyRef} className="mt-7 space-y-4 rounded-3xl bg-white p-5 ring-1 ring-ink-900/5">
-              {product.upcoming ? (
+              {!orderable ? (
                 <>
                   <p className="font-semibold">Bientôt disponible sur Poke 30</p>
                   <p className="text-sm text-slate-600">
-                    Ce produit sort le {releaseDate(product)}. Le prix et la commande seront ouverts sur cette page dès sa sortie.
+                    {upcoming
+                      ? `Ce produit sort le ${releaseDate(product)} : la commande ouvrira sur cette page le jour de sa sortie.`
+                      : 'Les commandes de ce produit ouvrent très prochainement sur cette page.'}
                   </p>
                   <Link to="/collection-30-ans" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-900 px-6 py-4 font-bold text-white transition hover:bg-ink-700">
                     Voir la collection 30 ans disponible <ArrowRight size={18} />
@@ -299,7 +305,7 @@ export default function ProductPage() {
       )}
 
       {/* Barre d'achat collante : toujours sur mobile, sur desktop dès que le bouton principal sort de l'écran */}
-      {!soldOut && (
+      {!soldOut && orderable && (
         <div
           className={`fixed inset-x-0 bottom-0 z-30 border-t border-ink-900/10 bg-white/95 backdrop-blur transition-transform duration-300 ${
             showSticky ? 'translate-y-0' : 'translate-y-0 lg:translate-y-full'

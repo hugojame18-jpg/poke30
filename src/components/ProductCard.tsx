@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CalendarClock, Check, ShoppingBag } from 'lucide-react'
-import { euro, releaseDate, universeOf, type Product } from '../lib/data'
+import { canOrder, euro, isUpcoming, releaseDate, universeOf, type Product } from '../lib/data'
 import { useCart } from '../lib/cart'
 import { useState, type MouseEvent } from 'react'
 
@@ -43,6 +43,7 @@ export default function ProductCard({ product, dark = false }: { product: Produc
   const [added, setAdded] = useState(false)
   const inCart = qtyOf(product.slug) > 0
   const soldOut = product.stock <= 0
+  const orderable = canOrder(product)
 
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect()
@@ -65,8 +66,12 @@ export default function ProductCard({ product, dark = false }: { product: Produc
           <ProductVisual product={product} className="transition-transform duration-500 group-hover:scale-105" />
         </div>
         <div className="absolute bottom-5 left-5 right-5 flex flex-wrap gap-1.5">
-          {product.badge && (
-            <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide shadow ${product.upcoming ? 'bg-sky-500 text-white' : 'bg-gold-400 text-ink-900'}`}>{product.badge}</span>
+          {!orderable ? (
+            <span className="rounded-full bg-sky-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow">Bientôt disponible</span>
+          ) : (
+            product.badge && (
+              <span className="rounded-full bg-gold-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-ink-900 shadow">{product.badge}</span>
+            )
           )}
         </div>
         <span className="absolute right-5 top-5 rounded-full bg-ink-900/85 px-2 py-1 text-[10px] font-bold text-white backdrop-blur">{product.lang}</span>
@@ -76,23 +81,25 @@ export default function ProductCard({ product, dark = false }: { product: Produc
         <Link to={`/produit/${product.slug}`} className="line-clamp-2 min-h-10 text-sm font-semibold leading-snug hover:underline">
           {product.name}
         </Link>
-        {product.upcoming ? (
+        {isUpcoming(product) ? (
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-500">
             <CalendarClock size={14} /> Sortie le {releaseDate(product)}
           </span>
-        ) : (
+        ) : orderable ? (
           <StockPill stock={product.stock} />
-        )}
-        {product.upcoming ? (
-          <Link
-            to={`/produit/${product.slug}`}
-            className={`mt-auto inline-flex items-center justify-center rounded-full px-3.5 py-2 text-xs font-bold ring-1 transition ${dark ? 'ring-white/20 hover:bg-white/5' : 'ring-ink-900/15 hover:bg-ink-900/5'}`}
-          >
-            Bientôt disponible
-          </Link>
         ) : (
+          <span className="text-xs font-semibold text-sky-500">Commandes bientôt ouvertes</span>
+        )}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
           <span className="font-display text-xl font-bold">{euro(product.price)}</span>
+          {!orderable ? (
+            <Link
+              to={`/produit/${product.slug}`}
+              className={`inline-flex items-center rounded-full px-3.5 py-2 text-xs font-bold ring-1 transition ${dark ? 'ring-white/20 hover:bg-white/5' : 'ring-ink-900/15 hover:bg-ink-900/5'}`}
+            >
+              Bientôt
+            </Link>
+          ) : (
           <button
             onClick={() => {
               if (inCart) return setOpen(true)
@@ -106,8 +113,8 @@ export default function ProductCard({ product, dark = false }: { product: Produc
           >
             {added || inCart ? <Check size={14} /> : <ShoppingBag size={14} />} {added ? 'Ajouté' : soldOut ? 'Épuisé' : inCart ? 'Au panier' : 'Ajouter'}
           </button>
+          )}
         </div>
-        )}
       </div>
     </article>
   )

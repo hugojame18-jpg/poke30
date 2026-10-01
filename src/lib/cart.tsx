@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { getProduct, type Product } from './data'
+import { canOrder, getProduct, type Product } from './data'
 import { SHOP } from './config'
 import { track } from './analytics'
 
@@ -74,7 +74,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const add = useCallback((slug: string) => {
     const p = getProduct(slug)
-    if (!p || p.upcoming) return
+    if (!p || !canOrder(p)) return
     track.addToCart(p, 1)
     // Un seul article par commande : le total doit correspondre à un lien de paiement (19,99 € ou 79,99 €)
     setRaw([{ slug, qty: clamp(slug, 1) }])
