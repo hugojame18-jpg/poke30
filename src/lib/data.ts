@@ -125,7 +125,7 @@ export const PRODUCTS: Product[] = [
     slug: 'mini-tin-30th-celebration',
     name: 'Mini Tin — 30th Celebration',
     short: 'Une mini boîte métal de la collection 30th Celebration, vendue à l’unité.',
-    price: 9.99,
+    price: 19.99,
     universe: 'pokemon',
     lang: 'EN',
     stock: 20,
