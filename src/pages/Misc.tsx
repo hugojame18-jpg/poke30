@@ -120,7 +120,7 @@ export function Account() {
   const steps = [
     { icon: PackageSearch, title: 'Préparation', text: 'Votre commande est vérifiée et emballée avec soin dès sa réception.' },
     { icon: Truck, title: 'Expédition suivie', text: 'Le numéro de suivi vous est envoyé par e-mail dès le départ du colis.' },
-    { icon: Clock, title: 'Livraison', text: `En ${SHOP.deliveryDays} jours ouvrés : pour une commande passée aujourd’hui, livraison le ${date}.` },
+    { icon: Clock, title: 'Livraison', text: `En ${SHOP.deliveryDays} jours : pour une commande passée aujourd’hui, livraison le ${date}.` },
   ]
   return (
     <>

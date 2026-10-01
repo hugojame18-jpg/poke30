@@ -1,11 +1,10 @@
 import { SHOP } from './config'
 
-function addBusinessDays(d: Date, n: number) {
+// Jours calendaires ; pas de livraison le dimanche, reportée au lundi
+function addDays(d: Date, n: number) {
   const r = new Date(d)
-  while (n > 0) {
-    r.setDate(r.getDate() + 1)
-    if (r.getDay() !== 0 && r.getDay() !== 6) n--
-  }
+  r.setDate(r.getDate() + n)
+  if (r.getDay() === 0) r.setDate(r.getDate() + 1)
   return r
 }
 
@@ -13,5 +12,5 @@ const fmt = (d: Date) => d.toLocaleDateString('fr-FR', { weekday: 'long', day: '
 
 /** Date de livraison estimée pour une commande passée aujourd'hui (« jeudi 8 octobre »). */
 export function deliveryDate(now = new Date()) {
-  return fmt(addBusinessDays(now, SHOP.deliveryDays))
+  return fmt(addDays(now, SHOP.deliveryDays))
 }

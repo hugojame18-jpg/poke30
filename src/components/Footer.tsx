@@ -9,7 +9,7 @@ const PERKS = [
   { icon: ShieldCheck, title: 'Paiement sécurisé', text: SHOP.payments.slice(0, 3).join(', ') },
   { icon: PackageCheck, title: '100 % officiel', text: 'Produits scellés d’usine' },
   { icon: Truck, title: 'Livraison suivie', text: 'Offerte, sans minimum' },
-  { icon: Clock, title: `Livré en ${SHOP.deliveryDays} jours`, text: 'Jours ouvrés' },
+  { icon: Clock, title: `Livré en ${SHOP.deliveryDays} jours`, text: 'Suivi inclus' },
 ]
 
 export function Perks({ dark = false }: { dark?: boolean }) {
@@ -102,7 +102,7 @@ export default function Footer() {
               <MapPin size={16} className="mt-0.5 shrink-0 text-gold-400" /> Émerainville, sur rendez-vous
             </p>
             <p className="mt-2 flex gap-2 text-sm text-white/80">
-              <Clock size={16} className="mt-0.5 shrink-0 text-gold-400" /> Livraison en {SHOP.deliveryDays} jours ouvrés
+              <Clock size={16} className="mt-0.5 shrink-0 text-gold-400" /> Livraison en {SHOP.deliveryDays} jours
             </p>
           </div>
         </div>

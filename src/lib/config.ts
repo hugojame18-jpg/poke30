@@ -4,7 +4,7 @@ export const SHOP = {
   url: 'https://poke30.site',
   email: 'contact@poke30.site',
   // Livraison suivie toujours offerte : le client paie exactement le montant du lien de paiement
-  deliveryDays: 3, // délai de livraison annoncé, en jours ouvrés (préparation + transport)
+  deliveryDays: 3, // délai de livraison annoncé, en jours (pas de livraison le dimanche)
   returnDays: 14, // droit de rétractation légal (produits scellés)
   pickupCity: 'Émerainville',
   payments: ['CB', 'Visa', 'Mastercard', 'PayPal', 'Apple Pay'],

@@ -241,7 +241,7 @@ export default function ProductPage() {
               </Accordion>
               <Accordion title="Livraison & retrait" icon={Truck}>
                 <p>
-                  Livraison suivie offerte en {SHOP.deliveryDays} jours ouvrés, expédiée depuis la France.
+                  Livraison suivie offerte en {SHOP.deliveryDays} jours, expédiée depuis la France.
                 </p>
                 <p className="mt-2">Retrait gratuit à {SHOP.pickupCity} sur rendez-vous.</p>
               </Accordion>
