@@ -104,6 +104,7 @@ export const PRODUCTS: Product[] = [
     universe: 'pokemon',
     lang: 'EN',
     stock: 6,
+    image: `${import.meta.env.BASE_URL}products/collection-classeur-30th-celebration.webp`,
     tags: ['30 ans'],
     badge: 'Nouveauté',
     description:
