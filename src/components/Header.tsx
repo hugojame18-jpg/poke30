@@ -16,7 +16,7 @@ const NAV = [
 ]
 
 const ANNOUNCES = [
-  '30th Celebration : Booster Bundle et Mini Tins le 2 octobre',
+  'Nouveau : Booster Bundle et Mini Tins 30th Celebration disponibles',
   'Collection Pokémon 30 ans disponible',
   'Produits 100 % officiels',
   'Livraison suivie depuis la France',

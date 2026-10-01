@@ -75,7 +75,7 @@ export const PRODUCTS: Product[] = [
     sales: 240,
   },
   ...[1, 2, 3, 4, 5, 6, 7].map(fp),
-  // Sorties du 2 octobre : commandables ce jour-là, à condition qu'un lien de paiement existe à leur prix (config.ts)
+  // Nouveautés 30th Celebration : commandables à partir de leur date de sortie, à condition qu'un lien de paiement existe à leur prix (config.ts)
   {
     slug: 'booster-bundle-30th-celebration',
     name: 'Booster Bundle — 30th Celebration',
@@ -96,7 +96,7 @@ export const PRODUCTS: Product[] = [
     ],
     addedAt: '2026-10-02',
     sales: 0,
-    release: '2026-10-02',
+    release: '2026-10-01',
   },
   {
     slug: 'collection-classeur-30th-celebration',
@@ -141,7 +141,7 @@ export const PRODUCTS: Product[] = [
     ],
     addedAt: '2026-10-02',
     sales: 0,
-    release: '2026-10-02',
+    release: '2026-10-01',
   },
 ]
 
