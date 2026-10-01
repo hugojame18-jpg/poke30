@@ -58,7 +58,7 @@ export const PRODUCTS: Product[] = [
     price: 79.99,
     universe: 'pokemon',
     lang: 'FR',
-    stock: 4,
+    stock: 0, // rupture de stock
     image: `${import.meta.env.BASE_URL}products/etb-30e-anniversaire.webp`,
     tags: ['30 ans'],
     badge: '30e anniversaire',

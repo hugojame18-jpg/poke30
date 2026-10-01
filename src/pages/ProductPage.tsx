@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowRight, Bell, CalendarClock, Check, ChevronDown, PackageCheck, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
-import { PRODUCTS, canOrder, euro, getProduct, isUpcoming, releaseDate, universeOf, type Product } from '../lib/data'
+import { ArrowRight, CalendarClock, Check, ChevronDown, PackageCheck, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
+import { PRODUCTS, canOrder, euro, getProduct, isUpcoming, releaseDate, universeOf } from '../lib/data'
 import { useCart } from '../lib/cart'
 import { SHOP } from '../lib/config'
 import { track } from '../lib/analytics'
@@ -22,29 +22,6 @@ function Accordion({ title, icon: Icon, children, defaultOpen = false }: { title
       </button>
       {open && <div className="fade-in pb-5 pl-8 text-sm leading-relaxed text-slate-600">{children}</div>}
     </div>
-  )
-}
-
-function NotifyMe({ product }: { product: Product }) {
-  const [email, setEmail] = useState('')
-  const [done, setDone] = useState(false)
-  if (done) return <p className="rounded-2xl bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">C’est noté ! Nous vous écrivons dès le retour en stock.</p>
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        if (email.includes('@')) setDone(true)
-      }}
-      className="rounded-2xl bg-white p-4 ring-1 ring-ink-900/10"
-    >
-      <p className="flex items-center gap-2 font-semibold">
-        <Bell size={16} className="text-gold-500" /> Prévenez-moi du retour en stock
-      </p>
-      <div className="mt-3 flex gap-2">
-        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="votre@email.fr" aria-label={`E-mail pour ${product.name}`} className="h-11 flex-1 rounded-full bg-cream px-4 text-sm outline-none ring-1 ring-ink-900/10 focus:ring-gold-500" />
-        <button className="h-11 rounded-full bg-ink-900 px-5 text-sm font-bold text-white">M’alerter</button>
-      </div>
-    </form>
   )
 }
 
@@ -207,7 +184,13 @@ export default function ProductPage() {
                   </Link>
                 </>
               ) : soldOut ? (
-                <NotifyMe product={product} />
+                <>
+                  <p className="font-display text-xl font-bold text-red-500">Rupture de stock</p>
+                  <p className="text-sm text-slate-600">Ce produit est épuisé pour le moment. Découvrez les nouveautés 30th Celebration.</p>
+                  <Link to="/#nouveautes" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold-400 px-6 py-4 font-bold text-ink-900 transition hover:bg-gold-300">
+                    Voir les nouveautés <ArrowRight size={18} />
+                  </Link>
+                </>
               ) : (
                 <>
                   {inCart > 0 && !justAdded ? (

@@ -3,14 +3,18 @@ import { ArrowRight, CalendarClock, ChevronDown, Flame, Sparkles } from 'lucide-
 import { useState } from 'react'
 import { ARTICLES, FAQ, PRODUCTS, UNIVERSES, euro, isUpcoming, releaseDate, universeOf } from '../lib/data'
 import { SHOP } from '../lib/config'
-import ProductCard, { ProductVisual } from '../components/ProductCard'
+import ProductCard from '../components/ProductCard'
 import { Perks } from '../components/Footer'
 import { GUARANTEES } from '../components/Trust'
 import { useSeo } from '../lib/seo'
 import { useRecent } from '../lib/recent'
 
-const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans') && !p.release)
+// Produits épuisés en fin de liste
+const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans') && !p.release).sort((a, b) => Number(a.stock <= 0) - Number(b.stock <= 0))
 const releases = PRODUCTS.filter((p) => p.release)
+// Disposition du visuel d'accueil : le Booster Bundle au centre, le classeur à gauche, le Mini Tin à droite
+const heroBundle = releases.find((p) => p.slug.startsWith('booster-bundle')) ?? releases[0]
+const heroSides = releases.filter((p) => p !== heroBundle).slice(0, 2)
 const graded = PRODUCTS.filter((p) => p.universe === 'gradees')
 const universes = UNIVERSES.map((u) => ({ ...u, products: PRODUCTS.filter((p) => p.universe === u.id) })).filter((u) => u.products.length)
 
@@ -46,65 +50,74 @@ export function dateFr(d: string) {
 
 export default function Home() {
   const [faq, setFaq] = useState<number | null>(0)
-  const etb = PRODUCTS[0]
   const recent = useRecent()
   const soon = releases.some(isUpcoming)
   useSeo({
     title: 'Poke 30 — Collection Pokémon 30 ans & cartes gradées',
     description: 'Spécialiste français Pokémon : ETB 30e anniversaire, coffrets First Partners et cartes gradées. Produits officiels, livraison suivie depuis la France.',
-    image: etb.image,
+    image: heroBundle?.image,
     jsonLd: ORGANIZATION_LD,
   })
 
   return (
     <>
-      {/* HERO */}
+      {/* HERO : sorties 30th Celebration en vedette */}
       <section className="relative overflow-hidden bg-ink-950 text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_30%,rgba(255,210,63,.18),transparent_55%),radial-gradient(ellipse_at_10%_90%,rgba(59,130,246,.18),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_30%,rgba(56,189,248,.22),transparent_55%),radial-gradient(ellipse_at_10%_90%,rgba(255,210,63,.16),transparent_50%)]" />
         <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(white_1px,transparent_1px),linear-gradient(90deg,white_1px,transparent_1px)] [background-size:48px_48px]" />
         <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:gap-12 sm:py-16 lg:grid-cols-[1.1fr_1fr] lg:py-24">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-gold-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-gold-300 ring-1 ring-gold-400/30">
-              <Sparkles size={14} /> Pokémon · 30e anniversaire
+            <span className="inline-flex items-center gap-2 rounded-full bg-sky-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-sky-300 ring-1 ring-sky-400/30">
+              <Sparkles size={14} /> {soon ? `Sortie le ${releaseDate(releases[0])}` : 'Nouveautés · 30th Celebration'}
             </span>
             <h1 className="mt-6 font-display text-[2.75rem] font-extrabold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
-              La collection
+              30th Celebration :
               <br />
-              30 ans est
+              les nouveautés
               <br />
-              <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-orange-400 bg-clip-text text-transparent">disponible.</span>
+              <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-orange-400 bg-clip-text text-transparent">{soon ? 'arrivent.' : 'sont là.'}</span>
             </h1>
-            <p className="mt-5 max-w-lg text-white/70 sm:mt-6 sm:text-lg">
-              ETB français et coffrets First Partners japonais des 7 générations. Produits officiels, stocks limités, expédiés depuis la France.
-            </p>
+            <ul className="mt-6 space-y-2 sm:text-lg">
+              {releases.map((p) => (
+                <li key={p.slug}>
+                  <Link to={`/produit/${p.slug}`} className="group flex max-w-md items-center justify-between gap-4 border-b border-white/10 pb-2 hover:border-gold-400/60">
+                    <span className="font-semibold text-white/85 group-hover:text-white">{p.name.replace(' — 30th Celebration', '')}</span>
+                    <span className="font-display font-extrabold text-gold-300">{euro(p.price)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
             <div className="mt-7 flex gap-3 sm:mt-8">
-              <Link to="/collection-30-ans" className="group inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gold-400 px-5 py-3.5 text-sm font-bold sm:flex-none sm:px-7 sm:py-4 sm:text-base text-ink-900 shadow-lg shadow-gold-400/20 transition hover:bg-gold-300">
-                <span className="sm:hidden">La collection</span>
-                <span className="hidden sm:inline">Découvrir la collection</span> <ArrowRight size={18} className="transition group-hover:translate-x-1" />
-              </Link>
-              <Link to={`/produit/${etb.slug}`} className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold ring-1 sm:px-7 sm:py-4 sm:text-base ring-white/20 transition hover:bg-white/5">
-                Voir l’ETB
+              <a href="#nouveautes" className="group inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gold-400 px-5 py-3.5 text-sm font-bold text-ink-900 shadow-lg shadow-gold-400/20 transition hover:bg-gold-300 sm:flex-none sm:px-7 sm:py-4 sm:text-base">
+                <span className="sm:hidden">Nouveautés</span>
+                <span className="hidden sm:inline">Voir les nouveautés</span> <ArrowRight size={18} className="transition group-hover:translate-x-1" />
+              </a>
+              <Link to="/collection-30-ans" className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold ring-1 ring-white/20 transition hover:bg-white/5 sm:px-7 sm:py-4 sm:text-base">
+                Collection 30 ans
               </Link>
             </div>
           </div>
 
-          <div className="relative mx-auto h-[290px] w-full max-w-md sm:h-[460px]">
-            <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-400/25 blur-3xl" />
-            <Link
-              to={`/produit/${etb.slug}`}
-              className="floaty absolute left-1/2 top-2 z-20 w-48 -translate-x-1/2 rounded-3xl bg-white p-4 shadow-2xl ring-1 ring-white/20 sm:w-72"
-            >
-              <img src={etb.image} alt={etb.name} fetchPriority="high" width={288} height={288} className="aspect-square w-full object-contain" />
-              <span className="absolute -right-3 -top-3 rounded-full bg-gold-400 px-3 py-1.5 text-xs font-bold text-ink-900 shadow-lg">Édition 30e anniversaire</span>
-            </Link>
-            {[2, 5].map((g, i) => (
+          <div className="relative mx-auto h-[300px] w-full max-w-md sm:h-[460px]">
+            <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/25 blur-3xl" />
+            {heroBundle && (
               <Link
-                key={g}
-                to={`/produit/coffret-first-partners-${g}g-30th-celebration-jp`}
+                to={`/produit/${heroBundle.slug}`}
+                className="floaty absolute left-1/2 top-2 z-20 w-44 -translate-x-1/2 rounded-3xl bg-white p-4 shadow-2xl ring-1 ring-white/20 sm:w-64"
+              >
+                <img src={heroBundle.image} alt={heroBundle.name} fetchPriority="high" width={256} height={256} className="aspect-square w-full object-contain" />
+                <span className="absolute -right-3 -top-3 rounded-full bg-gold-400 px-3 py-1.5 text-xs font-bold text-ink-900 shadow-lg">{euro(heroBundle.price)}</span>
+              </Link>
+            )}
+            {heroSides.map((p, i) => (
+              <Link
+                key={p.slug}
+                to={`/produit/${p.slug}`}
                 style={{ ['--r' as string]: i ? '8deg' : '-8deg', animationDelay: `${i + 1}s` }}
                 className={`floaty absolute bottom-0 z-10 w-32 rounded-2xl bg-white p-2.5 shadow-2xl sm:w-48 ${i ? 'right-0' : 'left-0'}`}
               >
-                <img src={`${import.meta.env.BASE_URL}products/first-partners-${g}g.webp`} alt={`Coffret First Partners ${g}G`} width={192} height={192} className="aspect-square w-full object-contain" />
+                <img src={p.image} alt={p.name} width={192} height={192} className="aspect-square w-full object-contain" />
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink-900 px-2.5 py-1 text-[11px] font-bold text-white shadow-lg">{euro(p.price)}</span>
               </Link>
             ))}
           </div>
@@ -113,6 +126,37 @@ export default function Home() {
           <Perks dark />
         </div>
       </section>
+
+      {/* BIENTÔT DISPONIBLE */}
+      {releases.length > 0 && (
+        <section id="nouveautes" className="mx-auto max-w-7xl scroll-mt-40 px-4 pt-12">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-indigo-700 p-6 text-white md:p-10">
+            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
+            <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_1.4fr]">
+              <div>
+                <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em]">
+                  <CalendarClock size={14} /> {soon ? 'Bientôt disponible' : 'Nouveautés'}
+                </p>
+                <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
+                  {soon ? `Sortie le ${releaseDate(releases[0])}` : 'Les nouveautés 30th Celebration sont là'}
+                </h2>
+                <p className="mt-3 max-w-md text-white/80">
+                  {soon
+                    ? 'Les nouveautés 30th Celebration arrivent chez Poke 30. Les commandes ouvriront sur le site le jour de leur sortie.'
+                    : 'Booster Bundle, Mini Tins et Collection Classeur : les sorties du 2 octobre, expédiées depuis la France.'}
+                </p>
+              </div>
+              <div className={`-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:items-stretch sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 ${releases.length > 2 ? 'sm:grid-cols-3' : releases.length > 1 ? 'sm:grid-cols-2' : 'sm:max-w-xs'}`}>
+                {releases.map((p) => (
+                  <div key={p.slug} className="w-56 shrink-0 snap-start text-ink-900 sm:w-auto">
+                    <ProductCard product={p} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* COLLECTION 30 ANS */}
       <section className="bg-ink-900 py-20">
@@ -131,41 +175,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* BIENTÔT DISPONIBLE */}
-      {releases.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 pt-20">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-indigo-700 p-6 text-white md:p-10">
-            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
-            <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_1.4fr]">
-              <div>
-                <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em]">
-                  <CalendarClock size={14} /> {soon ? 'Bientôt disponible' : 'Nouveautés'}
-                </p>
-                <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
-                  {soon ? `Sortie le ${releaseDate(releases[0])}` : 'Les nouveautés 30th Celebration sont là'}
-                </h2>
-                <p className="mt-3 max-w-md text-white/80">
-                  {soon
-                    ? 'Les nouveautés 30th Celebration arrivent chez Poke 30. Les commandes ouvriront sur le site le jour de leur sortie.'
-                    : 'Booster Bundle, Mini Tins et Collection Classeur : les sorties du 2 octobre, expédiées depuis la France.'}
-                </p>
-              </div>
-              <div className={`-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 ${releases.length > 2 ? 'sm:grid-cols-3' : releases.length > 1 ? 'sm:grid-cols-2' : 'sm:max-w-xs'}`}>
-                {releases.map((p) => (
-                  <Link key={p.slug} to={`/produit/${p.slug}`} className="group w-40 shrink-0 snap-start rounded-2xl bg-white p-3 text-ink-900 shadow-2xl transition hover:-translate-y-1 sm:w-auto">
-                    <div className="aspect-square overflow-hidden rounded-xl">
-                      <ProductVisual product={p} className="transition duration-500 group-hover:scale-105" />
-                    </div>
-                    <p className="mt-2 line-clamp-2 px-1 text-sm font-bold leading-snug">{p.name}</p>
-                    <p className="mt-1 px-1 font-display text-lg font-extrabold">{euro(p.price)}</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* UNIVERS */}
       <section className="mx-auto max-w-7xl px-4 py-20">
