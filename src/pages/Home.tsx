@@ -72,13 +72,13 @@ export default function Home() {
       <section className="relative overflow-hidden bg-ink-950 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_30%,rgba(56,189,248,.22),transparent_55%),radial-gradient(ellipse_at_10%_90%,rgba(255,210,63,.16),transparent_50%)]" />
         <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(white_1px,transparent_1px),linear-gradient(90deg,white_1px,transparent_1px)] [background-size:48px_48px]" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-9 sm:gap-12 sm:py-16 lg:grid-cols-[1.1fr_1fr] lg:py-20">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-sky-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-sky-300 ring-1 ring-sky-400/30">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-9 sm:gap-12 sm:py-16 md:grid-cols-[1.1fr_1fr] md:gap-8 lg:gap-12 lg:py-20">
+          <div className="min-w-0">
+            <span className="inline-flex items-center gap-2 rounded-full bg-sky-400/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-sky-300 ring-1 ring-sky-400/30 sm:text-xs sm:tracking-[0.18em]">
               <Sparkles size={14} /> {next ? `Sortie le ${releaseDate(next)}` : 'Nouveau · 30th Celebration'}
             </span>
-            <h1 className="mt-5 font-display text-[2.6rem] font-extrabold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
-              30th Celebration :
+            <h1 className="mt-5 font-display text-[2.1rem] font-extrabold leading-[0.95] tracking-tight min-[380px]:text-[2.6rem] sm:text-6xl md:text-5xl lg:text-6xl xl:text-7xl">
+              30th Celebration&nbsp;:
               <br />
               les nouveautés
               <br />
@@ -101,14 +101,14 @@ export default function Home() {
               {heroOrderable ? (
                 <Link
                   to={`/produit/${heroBundle.slug}`}
-                  className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-gold-400 px-7 py-4 font-bold text-ink-900 shadow-lg shadow-gold-400/20 transition hover:bg-gold-300"
+                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-gold-400 px-5 py-4 text-center font-bold text-ink-900 shadow-lg shadow-gold-400/20 transition hover:bg-gold-300 sm:px-7 lg:whitespace-nowrap"
                 >
                   <Lock size={18} /> Commander le {shortName(heroBundle.name)} · {euro(heroBundle.price)}
                 </Link>
               ) : null}
               <a
                 href="#nouveautes"
-                className={`group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-7 py-4 font-bold transition ${
+                className={`group inline-flex items-center justify-center gap-2 rounded-full px-5 py-4 text-center font-bold transition sm:px-7 lg:whitespace-nowrap ${
                   heroOrderable ? 'ring-1 ring-white/20 hover:bg-white/5' : 'bg-gold-400 text-ink-900 hover:bg-gold-300'
                 }`}
               >
@@ -124,12 +124,12 @@ export default function Home() {
             </ul>
           </div>
 
-          <div className="relative mx-auto h-[280px] w-full max-w-md sm:h-[440px]">
+          <div className="relative mx-auto h-[280px] w-full max-w-md sm:h-[440px] md:h-[360px] lg:h-[440px]">
             <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/25 blur-3xl" />
             {heroBundle?.image && (
               <Link
                 to={`/produit/${heroBundle.slug}`}
-                className="floaty absolute left-1/2 top-2 z-20 w-40 -translate-x-1/2 rounded-3xl bg-white p-4 shadow-2xl ring-1 ring-white/20 sm:w-64"
+                className="floaty absolute left-1/2 top-2 z-20 w-40 -translate-x-1/2 rounded-3xl bg-white p-4 shadow-2xl ring-1 ring-white/20 sm:w-64 md:w-48 lg:w-64"
               >
                 <img src={heroBundle.image} alt={heroBundle.name} fetchPriority="high" width={256} height={256} className="aspect-square w-full object-contain" />
                 <span className="absolute -right-3 -top-3 rounded-full bg-gold-400 px-3 py-1.5 text-xs font-bold text-ink-900 shadow-lg">{euro(heroBundle.price)}</span>
@@ -140,7 +140,7 @@ export default function Home() {
                 key={p.slug}
                 to={`/produit/${p.slug}`}
                 style={{ ['--r' as string]: i ? '8deg' : '-8deg', animationDelay: `${i + 1}s` }}
-                className={`floaty absolute bottom-0 z-10 w-28 rounded-2xl bg-white p-2.5 shadow-2xl sm:w-48 ${i ? 'right-0' : 'left-0'}`}
+                className={`floaty absolute bottom-0 z-10 w-28 rounded-2xl bg-white p-2.5 shadow-2xl sm:w-48 md:w-36 lg:w-48 ${i ? 'right-0' : 'left-0'}`}
               >
                 {p.image && <img src={p.image.replace('/products/', '/products/sm/')} alt={p.name} width={192} height={192} className="aspect-square w-full object-contain" />}
                 <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink-900 px-2.5 py-1 text-[11px] font-bold text-white shadow-lg">{euro(p.price)}</span>
@@ -191,7 +191,7 @@ export default function Home() {
       {/* GARANTIES */}
       <section className="mx-auto max-w-7xl px-4 pb-16 sm:pb-20">
         <SectionHead eyebrow="Acheter en confiance" title="Nos engagements" />
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {GUARANTEES.map(({ icon: Icon, title, text }) => (
             <div key={title} className="rounded-3xl bg-white p-5 ring-1 ring-ink-900/5 sm:p-6">
               <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gold-400/15 text-gold-500">

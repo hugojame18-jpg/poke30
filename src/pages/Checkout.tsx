@@ -124,14 +124,14 @@ export default function Checkout() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-5 sm:py-10">
       <div className="mb-5 flex items-center justify-between gap-4">
-        <Link to={`/produit/${lines[0].slug}`} className="inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-ink-900">
-          <ArrowLeft size={16} /> Retour
+        <Link to={`/produit/${lines[0].slug}`} className="-m-2 inline-flex items-center gap-1 p-2 text-sm font-semibold text-slate-500 hover:text-ink-900" aria-label="Retour au produit">
+          <ArrowLeft size={16} /> <span className="hidden min-[360px]:inline">Retour</span>
         </Link>
-        <ol className="flex items-center gap-2 text-xs font-bold sm:text-sm" aria-label="Étapes de la commande">
+        <ol className="flex items-center gap-1.5 text-xs font-bold sm:gap-2 sm:text-sm" aria-label="Étapes de la commande">
           <li className="flex items-center gap-1.5 text-ink-900">
             <span className="grid h-6 w-6 place-items-center rounded-full bg-gold-400">1</span> Livraison
           </li>
-          <li aria-hidden="true" className="h-px w-6 bg-ink-900/20" />
+          <li aria-hidden="true" className="h-px w-4 bg-ink-900/20 sm:w-6" />
           <li className="flex items-center gap-1.5 text-slate-400">
             <span className="grid h-6 w-6 place-items-center rounded-full ring-1 ring-slate-300">2</span> Paiement
           </li>

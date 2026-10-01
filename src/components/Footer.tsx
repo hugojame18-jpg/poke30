@@ -12,7 +12,7 @@ const PERKS = [
 
 export function Perks({ dark = false }: { dark?: boolean }) {
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 lg:grid-cols-4">
       {PERKS.map(({ icon: Icon, title, text }) => (
         <div key={title} className={`flex items-center gap-3 rounded-2xl p-4 ${dark ? 'bg-white/5 text-white' : 'bg-white'}`}>
           <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gold-400/15 text-gold-500">

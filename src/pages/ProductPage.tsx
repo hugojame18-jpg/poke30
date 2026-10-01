@@ -89,14 +89,14 @@ export default function ProductPage() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 py-5 pb-28 sm:py-8 lg:pb-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 pb-28 sm:py-8 md:pb-8">
         <nav className="mb-4 text-xs text-slate-500 sm:mb-6">
           <Link to="/" className="hover:text-ink-900">Accueil</Link> / <Link to="/boutique" className="hover:text-ink-900">Boutique</Link> /{' '}
           <span className="text-ink-900">{product.name}</span>
         </nav>
 
-        <div className="grid gap-6 lg:grid-cols-2 lg:gap-10">
-          <div className="lg:sticky lg:top-36 lg:self-start">
+        <div className="grid gap-6 md:grid-cols-2 lg:gap-10">
+          <div className="min-w-0 md:sticky md:top-24 md:self-start lg:top-36">
             <div
               className="relative aspect-square cursor-zoom-in overflow-hidden rounded-3xl bg-white ring-1 ring-ink-900/5"
               onMouseMove={(e) => {
@@ -181,7 +181,7 @@ export default function ProductPage() {
                 <>
                   <button
                     onClick={buy}
-                    className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold-400 px-6 py-4 text-lg font-bold text-ink-900 shadow-lg shadow-gold-400/30 transition hover:bg-gold-300 active:scale-[.98]"
+                    className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold-400 px-5 py-4 text-base font-bold min-[380px]:text-lg md:whitespace-nowrap md:text-base lg:text-lg text-ink-900 shadow-lg shadow-gold-400/30 transition hover:bg-gold-300 active:scale-[.98]"
                   >
                     <Lock size={18} /> Commander · {euro(product.price)} <ArrowRight size={18} className="transition group-hover:translate-x-1" />
                   </button>
@@ -265,7 +265,7 @@ export default function ProductPage() {
       {!soldOut && orderable && (
         <div
           className={`fixed inset-x-0 bottom-0 z-30 border-t border-ink-900/10 bg-white/95 backdrop-blur transition-transform duration-300 ${
-            showSticky ? 'translate-y-0' : 'translate-y-0 lg:translate-y-full'
+            showSticky ? 'translate-y-0' : 'translate-y-0 md:translate-y-full'
           }`}
         >
           <div className="mx-auto flex max-w-7xl items-center gap-3 p-3">
