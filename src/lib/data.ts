@@ -160,6 +160,9 @@ export const releaseLabel = (p: Product) => (p.release && hasDay(p.release) ? `l
 export const isUpcoming = (p: Product) =>
   !!p.release && (!hasDay(p.release) || Date.now() < new Date(`${p.release}T00:00:00`).getTime())
 /** Commandable : sorti et payable avec un lien de paiement à son prix exact */
+/** Ordre d'affichage : nouveautés commandables en tête, puis le reste, puis à venir, puis épuisés */
+export const listRank = (p: Product, featureNew = true) =>
+  p.stock <= 0 ? 3 : !canOrder(p) ? 2 : featureNew && p.release ? 0 : 1
 export const canOrder = (p: Product) => !isUpcoming(p) && !!SHOP.checkoutUrls[Math.round(p.price * 100)]
 export const universeOf = (id: Universe) => UNIVERSES.find((u) => u.id === id)!
 

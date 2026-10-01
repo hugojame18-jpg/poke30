@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarClock, ChevronDown, Flame, Sparkles } from 'lucide-react'
 import { useState } from 'react'
-import { ARTICLES, FAQ, PRODUCTS, euro, isUpcoming, releaseDate, releaseLabel, universeOf } from '../lib/data'
+import { ARTICLES, FAQ, PRODUCTS, euro, listRank, isUpcoming, releaseDate, releaseLabel, universeOf } from '../lib/data'
 import { SHOP } from '../lib/config'
 import ProductCard from '../components/ProductCard'
 import { Perks } from '../components/Footer'
@@ -9,8 +9,8 @@ import { GUARANTEES } from '../components/Trust'
 import { useSeo } from '../lib/seo'
 import { useRecent } from '../lib/recent'
 
-// Produits épuisés en fin de liste
-const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans') && !p.release).sort((a, b) => Number(a.stock <= 0) - Number(b.stock <= 0))
+// Nouveautés en tête, produits à venir puis épuisés en fin de liste
+const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans')).sort((a, b) => listRank(a) - listRank(b))
 const releases = PRODUCTS.filter((p) => p.release)
 // Prochaine sortie à date fixe (les sorties « au mois près », comme le classeur en décembre, ne comptent pas)
 const nextDated = () => releases.find((p) => p.release!.length === 10 && isUpcoming(p))

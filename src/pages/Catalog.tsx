@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { SlidersHorizontal, X } from 'lucide-react'
-import { PRODUCTS, UNIVERSES, type Lang, type Universe } from '../lib/data'
+import { PRODUCTS, UNIVERSES, listRank, type Lang, type Universe } from '../lib/data'
 import ProductCard from '../components/ProductCard'
 import NotFound from './NotFound'
 import { useSeo } from '../lib/seo'
@@ -41,8 +41,8 @@ export default function Catalog({ collection30 = false }: { collection30?: boole
     if (sort === 'prix-asc') sorted.sort((a, b) => a.price - b.price)
     if (sort === 'prix-desc') sorted.sort((a, b) => b.price - a.price)
     // Nouveautés en vedette (pertinence / nouveautés), produits épuisés toujours en fin de liste
-    const rank = (p: (typeof l)[number]) => (p.stock <= 0 ? 2 : p.release && (sort === 'pertinence' || sort === 'nouveautes') ? 0 : 1)
-    sorted.sort((a, b) => rank(a) - rank(b))
+    const featureNew = sort === 'pertinence' || sort === 'nouveautes'
+    sorted.sort((a, b) => listRank(a, featureNew) - listRank(b, featureNew))
     return sorted
   }, [collection30, u, q, langs, stockOnly, sort])
 
