@@ -3,7 +3,6 @@ import { ArrowRight, Check, ChevronDown, CreditCard, Flame, Lock, MousePointerCl
 import { useState } from 'react'
 import { FAQ, PRODUCTS, canOrder, euro, listRank, isUpcoming, releaseDate } from '../lib/data'
 import { SHOP } from '../lib/config'
-import { useBuyNow } from '../lib/cart'
 import { deliveryDate } from '../lib/delivery'
 import ProductCard from '../components/ProductCard'
 import { Perks } from '../components/Footer'
@@ -52,7 +51,6 @@ export function dateFr(d: string) {
 
 export default function Home() {
   const [faq, setFaq] = useState<number | null>(0)
-  const buyNow = useBuyNow()
   const next = nextDated()
   const heroOrderable = !!heroBundle && canOrder(heroBundle) && heroBundle.stock > 0
   useSeo({
@@ -101,12 +99,12 @@ export default function Home() {
             </ul>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {heroOrderable ? (
-                <button
-                  onClick={() => buyNow(heroBundle.slug)}
+                <Link
+                  to={`/produit/${heroBundle.slug}`}
                   className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-gold-400 px-7 py-4 font-bold text-ink-900 shadow-lg shadow-gold-400/20 transition hover:bg-gold-300"
                 >
                   <Lock size={18} /> Commander le {shortName(heroBundle.name)} · {euro(heroBundle.price)}
-                </button>
+                </Link>
               ) : null}
               <a
                 href="#nouveautes"

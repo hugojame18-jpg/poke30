@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarClock } from 'lucide-react'
 import { canOrder, euro, isUpcoming, releaseLabel, universeOf, type Product } from '../lib/data'
-import { useBuyNow } from '../lib/cart'
 import type { MouseEvent } from 'react'
 
 /** Version 450 px des photos (public/products/sm), servie aux vignettes pour alléger la page */
@@ -55,7 +54,6 @@ export function StockPill({ stock }: { stock: number }) {
 }
 
 export default function ProductCard({ product, dark = false }: { product: Product; dark?: boolean }) {
-  const buyNow = useBuyNow()
   const soldOut = product.stock <= 0
   const orderable = canOrder(product)
 
@@ -113,15 +111,17 @@ export default function ProductCard({ product, dark = false }: { product: Produc
             >
               Bientôt
             </Link>
+          ) : soldOut ? (
+            <span className="inline-flex items-center rounded-full px-3.5 py-2 text-xs font-bold opacity-40 ring-1 ring-current">Épuisé</span>
           ) : (
-          <button
-            onClick={() => buyNow(product.slug)}
-            disabled={soldOut}
-            aria-label={soldOut ? `${product.name} épuisé` : `Commander ${product.name}`}
-            className="group/btn inline-flex items-center gap-1 rounded-full bg-gold-400 px-3.5 py-2 text-xs font-bold text-ink-900 transition hover:bg-gold-300 active:scale-95 disabled:bg-transparent disabled:text-current disabled:opacity-40 disabled:ring-1 disabled:ring-current"
-          >
-            {soldOut ? 'Épuisé' : 'Commander'} {!soldOut && <ArrowRight size={14} className="transition group-hover/btn:translate-x-0.5" />}
-          </button>
+            // Passe d'abord par la fiche produit, où « Commander » mène au formulaire de livraison
+            <Link
+              to={`/produit/${product.slug}`}
+              aria-label={`Commander ${product.name}`}
+              className="group/btn inline-flex items-center gap-1 rounded-full bg-gold-400 px-3.5 py-2 text-xs font-bold text-ink-900 transition hover:bg-gold-300 active:scale-95"
+            >
+              Commander <ArrowRight size={14} className="transition group-hover/btn:translate-x-0.5" />
+            </Link>
           )}
         </div>
       </div>
