@@ -15,7 +15,7 @@ export const SHOP = {
   // Liens de paiement affiliés (montant net arrondi en centimes)
   checkoutUrls: {
     999: 'https://t.trklinkx.com/click?pid=4784&offer_id=13179&sub3=9,99',
-    1999: 'https://t.trklinkx.com/click?pid=4784&offer_id=13057&sub3=19',
+    1999: 'https://t.trklinkx.com/click?pid=4784&offer_id=13057&sub3=poke',
     4999: 'https://t.trklinkx.com/click?pid=4784&offer_id=12355',
     7999: 'https://t.trklinkx.com/click?pid=4784&offer_id=12541',
   } as Record<number, string>,
