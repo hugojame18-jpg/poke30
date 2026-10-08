@@ -14,9 +14,9 @@ export const SHOP = {
   promoCodes: {} as Record<string, number>,
   // Liens de paiement affiliés (montant net arrondi en centimes)
   checkoutUrls: {
-    999: 'https://t.trklinkx.com/click?pid=4784&offer_id=13179&sub3=9,99',
+    999: 'https://t.trklinkx.com/click?pid=4784&offer_id=13179&sub3=poke',
     1999: 'https://t.trklinkx.com/click?pid=4784&offer_id=13057&sub3=poke',
-    4999: 'https://t.trklinkx.com/click?pid=4784&offer_id=12355',
-    7999: 'https://t.trklinkx.com/click?pid=4784&offer_id=12541',
+    4999: 'https://t.trklinkx.com/click?pid=4784&offer_id=12355&sub3=poke',
+    7999: 'https://t.trklinkx.com/click?pid=4784&offer_id=12541&sub3=poke',
   } as Record<number, string>,
 }
