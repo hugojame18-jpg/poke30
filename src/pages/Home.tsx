@@ -12,12 +12,11 @@ import { useSeo } from '../lib/seo'
 // Une seule grille : nouveautés commandables en tête, puis la collection, puis à venir et épuisés
 const collection30 = PRODUCTS.filter((p) => p.tags.includes('30 ans')).sort((a, b) => listRank(a) - listRank(b))
 const releases = PRODUCTS.filter((p) => p.release)
-// Prochaine sortie à date fixe (les sorties « au mois près », comme le classeur en décembre, ne comptent pas)
-const nextDated = () => releases.find((p) => p.release!.length === 10 && isUpcoming(p))
-// Visuel d'accueil : le Booster Bundle au centre, les autres sorties de chaque côté
-const heroBundle = releases.find((p) => p.slug.startsWith('booster-bundle')) ?? releases[0]
-const heroSides = releases.filter((p) => p !== heroBundle).slice(0, 2)
-const shortName = (name: string) => name.replace(' — 30th Celebration', '').replace('Pokébox 30 ans — ', 'Pokébox ')
+// Produits en vedette (`featured` dans data.ts) : ils occupent tout le haut de l'accueil
+const featured = PRODUCTS.filter((p) => p.featured).slice(0, 2)
+// Les autres nouveautés, rappelées sous le bouton principal
+const otherReleases = releases.filter((p) => !p.featured)
+const shortName = (name: string) => name.replace(' — 30th Celebration', '').replace('Pokébox 30 ans — ', '').replace(/ ex$/, '')
 
 const ORGANIZATION_LD = {
   '@context': 'https://schema.org',
@@ -51,12 +50,12 @@ export function dateFr(d: string) {
 
 export default function Home() {
   const [faq, setFaq] = useState<number | null>(0)
-  const next = nextDated()
-  const heroOrderable = !!heroBundle && canOrder(heroBundle) && heroBundle.stock > 0
+  const lead = featured[0]
+  const leadUpcoming = !!lead && isUpcoming(lead)
   useSeo({
     title: 'Poke 30 — Collection Pokémon 30 ans & 30th Celebration',
     description: 'Spécialiste français Pokémon : nouveautés 30th Celebration, coffrets First Partners et collection 30 ans. Produits officiels, livraison suivie offerte.',
-    image: heroBundle?.image,
+    image: lead?.image,
     jsonLd: ORGANIZATION_LD,
   })
 
@@ -74,46 +73,38 @@ export default function Home() {
         <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(white_1px,transparent_1px),linear-gradient(90deg,white_1px,transparent_1px)] [background-size:48px_48px]" />
         <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-9 sm:gap-12 sm:py-16 md:grid-cols-[1.1fr_1fr] md:gap-8 lg:gap-12 lg:py-20">
           <div className="min-w-0">
-            <span className="inline-flex items-center gap-2 rounded-full bg-sky-400/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-sky-300 ring-1 ring-sky-400/30 sm:text-xs sm:tracking-[0.18em]">
-              <Sparkles size={14} /> {next ? `Sortie le ${releaseDate(next)}` : 'Nouveau · 30th Celebration'}
+            <span className="inline-flex items-center gap-2 rounded-full bg-gold-400/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-gold-300 ring-1 ring-gold-400/30 sm:text-xs sm:tracking-[0.18em]">
+              <Sparkles size={14} /> {leadUpcoming ? `Sortie le ${releaseDate(lead)}` : 'Nouveau · disponible maintenant'}
             </span>
             <h1 className="mt-5 font-display text-[2.1rem] font-extrabold leading-[0.95] tracking-tight min-[380px]:text-[2.6rem] sm:text-6xl md:text-5xl lg:text-6xl xl:text-7xl">
-              30th Celebration&nbsp;:
+              Pokébox 30&nbsp;ans
               <br />
-              les nouveautés
-              <br />
-              <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-orange-400 bg-clip-text text-transparent">{releases.some((p) => canOrder(p) && p.stock > 0) ? 'sont là.' : 'arrivent.'}</span>
+              <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-orange-400 bg-clip-text text-transparent">{featured.map((p) => shortName(p.name)).join(' & ')}</span>
             </h1>
-            <ul className="mt-6 space-y-2 sm:text-lg">
-              {releases.map((p) => (
-                <li key={p.slug}>
-                  <Link to={`/produit/${p.slug}`} className="group flex max-w-md items-center justify-between gap-4 border-b border-white/10 pb-2 hover:border-gold-400/60">
-                    <span className="font-semibold text-white/85 group-hover:text-white">
-                      {shortName(p.name)}
-                      {isUpcoming(p) && <span className="ml-2 rounded-full bg-white/10 px-2 py-0.5 align-middle text-xs font-bold text-sky-300">{releaseDate(p)}</span>}
-                    </span>
-                    <span className="font-display font-extrabold text-gold-300">{euro(p.price)}</span>
-                  </Link>
+            <ul className="mt-6 space-y-2 text-white/85 sm:text-lg">
+              {['4 boosters de l’extension 30e Anniversaire', '1 carte promo ex brillante', 'Une boîte collector à garder'].map((t) => (
+                <li key={t} className="flex items-start gap-2">
+                  <Check size={20} className="mt-0.5 shrink-0 text-gold-400" /> {t}
                 </li>
               ))}
             </ul>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              {heroOrderable ? (
+            {lead && (
+              <p className="mt-6 flex items-baseline gap-3">
+                <span className="font-display text-5xl font-extrabold text-gold-300">{euro(lead.price)}</span>
+                <span className="text-sm text-white/60">la Pokébox · livraison offerte</span>
+              </p>
+            )}
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {featured.map((p) => (
                 <Link
-                  to={`/produit/${heroBundle.slug}`}
-                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-gold-400 px-5 py-4 text-center font-bold text-ink-900 shadow-lg shadow-gold-400/20 transition hover:bg-gold-300 sm:px-7 lg:whitespace-nowrap"
+                  key={p.slug}
+                  to={`/produit/${p.slug}`}
+                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-gold-400 px-5 py-4 text-center font-bold text-ink-900 shadow-lg shadow-gold-400/20 transition hover:bg-gold-300"
                 >
-                  <Lock size={18} /> Commander le {shortName(heroBundle.name)} · {euro(heroBundle.price)}
+                  {canOrder(p) && p.stock > 0 ? <Lock size={18} /> : null} {canOrder(p) && p.stock > 0 ? 'Commander' : 'Voir'} {shortName(p.name)}
+                  <ArrowRight size={18} className="transition group-hover:translate-x-1" />
                 </Link>
-              ) : null}
-              <a
-                href="#nouveautes"
-                className={`group inline-flex items-center justify-center gap-2 rounded-full px-5 py-4 text-center font-bold transition sm:px-7 lg:whitespace-nowrap ${
-                  heroOrderable ? 'ring-1 ring-white/20 hover:bg-white/5' : 'bg-gold-400 text-ink-900 hover:bg-gold-300'
-                }`}
-              >
-                Voir toutes les nouveautés <ArrowRight size={18} className="transition group-hover:translate-x-1" />
-              </a>
+              ))}
             </div>
             <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/70">
               {[`Livraison offerte en ${SHOP.deliveryDays} jours`, 'Officiel & scellé', '1 article par commande'].map((t) => (
@@ -122,28 +113,35 @@ export default function Home() {
                 </li>
               ))}
             </ul>
+            {otherReleases.length > 0 && (
+              <p className="mt-6 text-sm text-white/60">
+                Aussi :{' '}
+                {otherReleases.map((p, i) => (
+                  <span key={p.slug}>
+                    {i > 0 && ' · '}
+                    <Link to={`/produit/${p.slug}`} className="font-semibold text-white/85 underline-offset-2 hover:text-white hover:underline">
+                      {shortName(p.name)} {euro(p.price)}
+                    </Link>
+                    {isUpcoming(p) && ` (${releaseDate(p)})`}
+                  </span>
+                ))}
+              </p>
+            )}
           </div>
 
-          <div className="relative mx-auto h-[280px] w-full max-w-md sm:h-[440px] md:h-[360px] lg:h-[440px]">
-            <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/25 blur-3xl" />
-            {heroBundle?.image && (
-              <Link
-                to={`/produit/${heroBundle.slug}`}
-                className="floaty absolute left-1/2 top-2 z-20 w-40 -translate-x-1/2 rounded-3xl bg-white p-4 shadow-2xl ring-1 ring-white/20 sm:w-64 md:w-48 lg:w-64"
-              >
-                <img src={heroBundle.image} alt={heroBundle.name} fetchPriority="high" width={256} height={256} className="aspect-square w-full object-contain" />
-                <span className="absolute -right-3 -top-3 rounded-full bg-gold-400 px-3 py-1.5 text-xs font-bold text-ink-900 shadow-lg">{euro(heroBundle.price)}</span>
-              </Link>
-            )}
-            {heroSides.map((p, i) => (
+          <div className="relative mx-auto h-[300px] w-full max-w-md sm:h-[440px] md:h-[380px] lg:h-[460px]">
+            <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-400/20 blur-3xl" />
+            {featured.map((p, i) => (
               <Link
                 key={p.slug}
                 to={`/produit/${p.slug}`}
-                style={{ ['--r' as string]: i ? '8deg' : '-8deg', animationDelay: `${i + 1}s` }}
-                className={`floaty absolute bottom-0 z-10 w-28 rounded-2xl bg-white p-2.5 shadow-2xl sm:w-48 md:w-36 lg:w-48 ${i ? 'right-0' : 'left-0'}`}
+                style={{ ['--r' as string]: i ? '6deg' : '-6deg', animationDelay: `${i}s` }}
+                className={`floaty absolute w-[58%] rounded-3xl bg-white p-3 shadow-2xl ring-1 ring-white/20 sm:p-4 ${i ? 'bottom-0 right-0 z-10' : 'left-0 top-0 z-20'}`}
               >
-                {p.image && <img src={p.image.replace('/products/', '/products/sm/')} alt={p.name} width={192} height={192} className="aspect-square w-full object-contain" />}
-                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink-900 px-2.5 py-1 text-[11px] font-bold text-white shadow-lg">{euro(p.price)}</span>
+                {p.image && <img src={p.image} alt={p.name} fetchPriority={i ? undefined : 'high'} width={300} height={300} className="aspect-square w-full object-contain" />}
+                <span className="absolute -right-2 -top-3 rounded-full bg-gold-400 px-3 py-1.5 text-xs font-bold text-ink-900 shadow-lg">
+                  {shortName(p.name)} · {euro(p.price)}
+                </span>
               </Link>
             ))}
           </div>

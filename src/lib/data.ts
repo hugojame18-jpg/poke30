@@ -19,6 +19,8 @@ export interface Product {
   details: [string, string][]
   addedAt: string
   sales: number
+  /** Mis en vedette en haut de l'accueil et en tête des listes */
+  featured?: boolean
   /**
    * Date de sortie. AAAA-MM-JJ : le produit devient commandable automatiquement ce jour-là.
    * AAAA-MM (mois seulement) : affiché « Sortie en <mois> », reste non commandable jusqu'à ce qu'une date précise soit renseignée.
@@ -143,12 +145,13 @@ export const PRODUCTS: Product[] = [
     sales: 0,
     release: '2026-10-01',
   },
-  // Sortie du 16 octobre : commandables ce jour-là, dès qu'un lien de paiement à 25,99 € existe (config.ts)
+  // Sortie du 16 octobre, mises en vedette en haut de l'accueil (featured)
   {
     slug: 'pokebox-30-ans-amphinobi',
     name: 'Pokébox 30 ans — Amphinobi ex',
     short: '4 boosters 30e Anniversaire et la carte promo Amphinobi ex brillante, dans une boîte collector.',
-    price: 25.99,
+    price: 19.99,
+    featured: true,
     universe: 'pokemon',
     lang: 'FR',
     stock: 10,
@@ -171,7 +174,8 @@ export const PRODUCTS: Product[] = [
     slug: 'pokebox-30-ans-nymphali',
     name: 'Pokébox 30 ans — Nymphali ex',
     short: '4 boosters 30e Anniversaire et la carte promo Nymphali ex brillante, dans une boîte collector.',
-    price: 25.99,
+    price: 19.99,
+    featured: true,
     universe: 'pokemon',
     lang: 'FR',
     stock: 10,
@@ -209,7 +213,7 @@ export const isUpcoming = (p: Product) =>
 /** Commandable : sorti et payable avec un lien de paiement à son prix exact */
 /** Ordre d'affichage : nouveautés commandables en tête, puis le reste, puis à venir, puis épuisés */
 export const listRank = (p: Product, featureNew = true) =>
-  p.stock <= 0 ? 3 : !canOrder(p) ? 2 : featureNew && p.release ? 0 : 1
+  p.stock <= 0 ? 3 : !canOrder(p) ? 2 : featureNew && p.featured ? -1 : featureNew && p.release ? 0 : 1
 export const canOrder = (p: Product) => !isUpcoming(p) && !!SHOP.checkoutUrls[Math.round(p.price * 100)]
 export const universeOf = (id: Universe) => UNIVERSES.find((u) => u.id === id)!
 
