@@ -143,6 +143,53 @@ export const PRODUCTS: Product[] = [
     sales: 0,
     release: '2026-10-01',
   },
+  // Sortie du 16 octobre : commandables ce jour-là, dès qu'un lien de paiement à 25,99 € existe (config.ts)
+  {
+    slug: 'pokebox-30-ans-amphinobi',
+    name: 'Pokébox 30 ans — Amphinobi ex',
+    short: '4 boosters 30e Anniversaire et la carte promo Amphinobi ex brillante, dans une boîte collector.',
+    price: 25.99,
+    universe: 'pokemon',
+    lang: 'FR',
+    stock: 10,
+    image: `${import.meta.env.BASE_URL}products/pokebox-amphinobi.webp`,
+    tags: ['30 ans'],
+    badge: 'Nouveauté',
+    description:
+      'La Pokébox 30 ans Amphinobi contient 4 boosters de l’extension 30e Anniversaire et 1 carte promo Amphinobi ex brillante. Le tout est rangé dans une boîte collector violette, à conserver une fois les boosters ouverts. Produit officiel en français, scellé.',
+    details: [
+      ['Langue', 'Français'],
+      ['Contenu', '4 boosters 30e Anniversaire, 1 carte promo Amphinobi ex brillante'],
+      ['Boîte', 'Pokébox collector en métal'],
+      ['État', 'Neuf, scellé d’usine'],
+    ],
+    addedAt: '2026-10-15',
+    sales: 0,
+    release: '2026-10-16',
+  },
+  {
+    slug: 'pokebox-30-ans-nymphali',
+    name: 'Pokébox 30 ans — Nymphali ex',
+    short: '4 boosters 30e Anniversaire et la carte promo Nymphali ex brillante, dans une boîte collector.',
+    price: 25.99,
+    universe: 'pokemon',
+    lang: 'FR',
+    stock: 10,
+    image: `${import.meta.env.BASE_URL}products/pokebox-nymphali.webp`,
+    tags: ['30 ans'],
+    badge: 'Nouveauté',
+    description:
+      'La Pokébox 30 ans Nymphali contient 4 boosters de l’extension 30e Anniversaire et 1 carte promo Nymphali ex brillante. Le tout est rangé dans une boîte collector verte et bleue, à conserver une fois les boosters ouverts. Produit officiel en français, scellé.',
+    details: [
+      ['Langue', 'Français'],
+      ['Contenu', '4 boosters 30e Anniversaire, 1 carte promo Nymphali ex brillante'],
+      ['Boîte', 'Pokébox collector en métal'],
+      ['État', 'Neuf, scellé d’usine'],
+    ],
+    addedAt: '2026-10-15',
+    sales: 0,
+    release: '2026-10-16',
+  },
 ]
 
 export const getProduct = (slug: string) => PRODUCTS.find((p) => p.slug === slug)

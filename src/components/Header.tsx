@@ -17,6 +17,7 @@ const NAV = [
 
 const ANNOUNCES = [
   'Nouveau : Booster Bundle et Mini Tins 30th Celebration',
+  'Pokébox 30 ans Amphinobi et Nymphali : sortie le 16 octobre',
   `Livraison suivie offerte en ${SHOP.deliveryDays} jours`,
   'Produits 100 % officiels et scellés',
   '1 article par commande, contre l’achat-revente',

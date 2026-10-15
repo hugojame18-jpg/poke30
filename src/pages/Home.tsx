@@ -17,7 +17,7 @@ const nextDated = () => releases.find((p) => p.release!.length === 10 && isUpcom
 // Visuel d'accueil : le Booster Bundle au centre, les autres sorties de chaque côté
 const heroBundle = releases.find((p) => p.slug.startsWith('booster-bundle')) ?? releases[0]
 const heroSides = releases.filter((p) => p !== heroBundle).slice(0, 2)
-const shortName = (name: string) => name.replace(' — 30th Celebration', '')
+const shortName = (name: string) => name.replace(' — 30th Celebration', '').replace('Pokébox 30 ans — ', 'Pokébox ')
 
 const ORGANIZATION_LD = {
   '@context': 'https://schema.org',
@@ -82,7 +82,7 @@ export default function Home() {
               <br />
               les nouveautés
               <br />
-              <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-orange-400 bg-clip-text text-transparent">{next ? 'arrivent.' : 'sont là.'}</span>
+              <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-orange-400 bg-clip-text text-transparent">{releases.some((p) => canOrder(p) && p.stock > 0) ? 'sont là.' : 'arrivent.'}</span>
             </h1>
             <ul className="mt-6 space-y-2 sm:text-lg">
               {releases.map((p) => (
@@ -90,7 +90,7 @@ export default function Home() {
                   <Link to={`/produit/${p.slug}`} className="group flex max-w-md items-center justify-between gap-4 border-b border-white/10 pb-2 hover:border-gold-400/60">
                     <span className="font-semibold text-white/85 group-hover:text-white">
                       {shortName(p.name)}
-                      {p.release!.length < 10 && <span className="ml-2 rounded-full bg-white/10 px-2 py-0.5 align-middle text-xs font-bold text-sky-300">{releaseDate(p)}</span>}
+                      {isUpcoming(p) && <span className="ml-2 rounded-full bg-white/10 px-2 py-0.5 align-middle text-xs font-bold text-sky-300">{releaseDate(p)}</span>}
                     </span>
                     <span className="font-display font-extrabold text-gold-300">{euro(p.price)}</span>
                   </Link>
